@@ -1,10 +1,17 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-import './index.css'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { AppProvider } from './hooks/AppContext';
+import { MenuContextProvider } from './hooks/MenuContextProvider';
+import { Routes } from './routes';
+import './styles/globals.scss';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-)
+ReactDOM.render(
+    <React.StrictMode>
+        <AppProvider>
+            <MenuContextProvider>
+                <Routes />
+            </MenuContextProvider>
+        </AppProvider>
+    </React.StrictMode>,
+    document.getElementById('root'),
+);

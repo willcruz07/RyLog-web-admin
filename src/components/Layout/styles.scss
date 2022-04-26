@@ -1,0 +1,34 @@
+@import '../../styles/variables.scss';
+
+.container-grid-layout {
+    display: grid;
+    grid-template-columns: $d--240 auto;
+    grid-template-rows: $d--72 auto;
+
+    grid-template-areas: 
+    'HEADER HEADER'
+    'NAV CONTENT';
+
+    height: 100vh;
+
+    @media(max-width: 700px) {        
+        grid-template-columns: 100%;
+        grid-template-areas: 
+        'HEADER'
+        'CONTENT';
+    }
+}
+
+.content-layout {
+    grid-area: CONTENT;    
+    padding: $d--32;    
+
+    width: 100%;   
+    min-height: $d--600;
+
+    overflow: auto; 
+    
+    @media(max-width: 700px) {        
+        padding: 0;
+    }
+}

@@ -1,0 +1,106 @@
+@import '../../styles/variables.scss';
+
+.container-nav {    
+    grid-area: NAV;
+    
+    display: flex;   
+
+    background-color: $color-background;
+    border-left: 1px solid $color-gray;
+    box-shadow: 1px 2px 3px $color-gray;
+
+    height: calc(100vh - $d--72);    
+    
+    @media(max-width: 700px) {  
+        overflow-x: hidden;
+        position: fixed;      
+        height: 100vh;        
+        width: 0;
+        z-index: 2;
+        transition: 0.5s;
+    }    
+
+    &__nav {        
+        width: 100%;
+
+        li {                            
+            transition: 0.1s ease-in;
+            
+            &:hover {
+                background-color: $color-gray;
+            }
+                     
+            a {
+                display: flex;
+                align-items: center;
+
+                font-family: $font-title;
+                font-size: $d--14;
+                font-weight: 600;
+                color: $color-quaternary;
+
+                padding: $d--16 $d--24;
+
+                transition: 0.2s ease-in;
+
+
+                svg {
+                    height: $d--16;
+                    width: $d--16;
+
+                    color: $color-quaternary;
+
+                    margin-right: $d--8;
+                }
+            }
+
+            @media(max-width: 700px) {
+                a {
+                    font-size: $d--16;                    
+                }
+            }            
+        }
+
+        .active {
+            color: $color-secondary;
+            font-weight: 700;
+            background-color: $color-gray;            
+            
+            svg {
+                height: $d--20;
+                width: $d--20;
+
+                color: $color-secondary;     
+            }
+
+        }
+    }
+}
+
+.openMenu {
+    width: $d--240;
+}
+
+.backdrop {
+    @media(max-width: 700px) { 
+        opacity: 0;
+        visibility: hidden;
+        position: fixed;
+        z-index: 1;    
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba($color: #000000, $alpha: 0.4);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        transition: 0.3s ease-in-out;
+
+        &.openMenu {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+}
+

@@ -1,0 +1,41 @@
+@import '../../styles/variables.scss';
+
+.container-header {
+    grid-area: HEADER;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 $d--24;
+    
+    background-color: scale-color($color: $color-primary, $lightness: -10%) ;       
+
+    border-bottom: 1px solid $color-gray;
+
+    box-shadow: 2px 3px 5px $color-gray;
+
+    svg {
+        height: $d--24;
+        width: $d--24;
+        color: $color-quaternary;
+        
+    }
+
+    &__title {
+        font-size: $d--24;
+        font-family: $font-title;
+        color: $color-black;
+
+    }
+
+    &__menu {
+        visibility: hidden;
+
+        @media(max-width: 700px) {
+            visibility: visible;          
+        }
+    }
+
+}

@@ -1,0 +1,99 @@
+@import '../../styles/variables.scss';
+
+.container-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    max-width: $d--480;
+    
+    &__message {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        margin-bottom: $d--16;
+
+        h1 {
+            font-family: $font-title;
+            color: $font-black-2;
+            margin-bottom: $d--8;
+            font-size: $d--24;
+        }
+
+        p {
+            font-family: $font-subtitle;
+            color: $font-black-2;
+            font-size: $d--16;
+            text-align: center;
+        }
+    }
+
+      
+    button {
+        align-self: center;
+        background-color: $color-success;
+        color: $color-white;
+        max-width: $d--200;        
+    }    
+
+    &__action {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+
+        button {
+            width: $d--110;
+        }
+
+        .dismiss {
+            margin-right: $d--16;
+            button {
+                background-color: $color-danger;
+            }            
+        }
+    }
+
+}
+
+.button-WARNING {
+    h1 {
+        color: $color-warning;
+    }
+
+    button {
+        background-color: $color-warning;
+    }
+}
+
+.button-DANGER {
+    h1 {
+        color: $color-danger;
+    }
+
+    button {
+        background-color: $color-danger;
+    }
+}
+
+.button-SUCCESS {
+    h1 {
+        color: $color-success;
+    }
+
+    button {
+        background-color: $color-success;
+    }
+}
+
+.button-INFO {
+    h1 {
+        color: $color-info;
+    }
+
+    button {
+        background-color: $color-info;
+    }
+}
+
