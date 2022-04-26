@@ -27,7 +27,7 @@
     }
 
     &__content {
-        background-color: $color-white-2;        
+        background-color: $color-white;        
         border-radius: 8px;
         transition: inherit;
         opacity: 0;
@@ -67,7 +67,7 @@
         span {
             font-size: $d--22;
             font-weight: 700;
-            font-family: $font-title;
+            font-family: $font-primary;
             color: $color-secondary;
         }
 

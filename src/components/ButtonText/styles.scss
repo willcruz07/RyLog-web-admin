@@ -1,0 +1,24 @@
+@import '../../styles/variables.scss';
+
+.button-outline {
+    width: 100%;    
+    color: $color-secondary;
+    font-size: $d--14;
+    font-family: $font-secondary;
+    border-radius: $d--8;        
+    transition: 0.1s ease-in;
+
+    &:hover {
+        color: $color-secondary;
+        font-weight: 600;    
+    }
+}
+
+.disabled-button-text {
+    cursor: default;
+    &:hover {
+        box-shadow: none;
+        filter: none;
+        font-weight: 400;  
+    }
+}

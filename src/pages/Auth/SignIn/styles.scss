@@ -1,0 +1,38 @@
+@import '../../../styles/variables.scss';
+
+.background-sign-in {
+    background: linear-gradient(135deg, $color-primary-gradient, $color-secondary-gradient), 
+        url('../../../assets/img/background.jpg') no-repeat center center / cover;   
+
+    height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container-login {
+    display: flex;
+    flex-direction: column;    
+
+    background-color: $color-white-500;
+
+    border: 1px solid $color-gray;
+    border-radius: $d--8;
+
+    min-width: $d--500;
+    min-height: $d--500;
+
+    padding: $d--24;
+
+    box-shadow: 1px 1px 2px $color-black-400;
+   
+    img {
+        align-self: center;
+        height: $d--200;
+        width: auto;
+
+        margin-bottom: $d--24;
+    }
+    
+}

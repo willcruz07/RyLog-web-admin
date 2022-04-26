@@ -5,7 +5,7 @@
     
     display: flex;   
 
-    background-color: $color-background;
+    background-color: $color-white;
     border-left: 1px solid $color-gray;
     box-shadow: 1px 2px 3px $color-gray;
 
@@ -34,10 +34,10 @@
                 display: flex;
                 align-items: center;
 
-                font-family: $font-title;
+                font-family: $font-primary;
                 font-size: $d--14;
                 font-weight: 600;
-                color: $color-quaternary;
+                color: $color-secondary;
 
                 padding: $d--16 $d--24;
 
@@ -48,7 +48,7 @@
                     height: $d--16;
                     width: $d--16;
 
-                    color: $color-quaternary;
+                    color: $color-secondary;
 
                     margin-right: $d--8;
                 }
