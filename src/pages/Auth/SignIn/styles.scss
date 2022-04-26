@@ -1,5 +1,16 @@
 @import '../../../styles/variables.scss';
 
+@keyframes animateSignIn {
+    from {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
 .background-sign-in {
     background: linear-gradient(135deg, $color-primary-gradient, $color-secondary-gradient), 
         url('../../../assets/img/background.jpg') no-repeat center center / cover;   
@@ -26,6 +37,8 @@
     padding: $d--24;
 
     box-shadow: 1px 1px 2px $color-black-400;
+
+    animation: animateSignIn 0.3s ease-in;
    
     img {
         align-self: center;
