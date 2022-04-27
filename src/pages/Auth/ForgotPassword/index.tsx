@@ -7,19 +7,20 @@ import { ButtonText } from '../../../components/ButtonText';
 
 import './styles.scss';
 
-export const SignIn: React.FC = () => {
+export const ForgotPassword: React.FC = () => {
     const [email, setEmail] = useState('');
-
     const navigate = useNavigate();
 
-    const handleNavigateForgotPassword = useCallback(() => {
-        navigate('/forgot-password');
+    const handleNavigateSignIn = useCallback(() => {
+        navigate('sign-in');
     }, []);
 
     return (
-        <div className="background-sign-in">
-            <div className="container-login">
+        <div className="background-forgot-password">
+            <div className="container-email">
                 <img src={Logo} alt="Logo" />
+
+                <h4>Informe o email para redefinir a senha.</h4>
 
                 <div className="container-login__inputs">
                     <Input
@@ -32,21 +33,10 @@ export const SignIn: React.FC = () => {
                         required
                     />
 
-                    <Input
-                        required
-                        label="Senha"
-                        icon="lock"
-                        onChange={setEmail}
-                        value={email}
-                        password
-                        type="text"
-                        marginBottom={16}
-                    />
-
                     <ButtonText
-                        title="Esqueceu a senha?"
-                        onClick={handleNavigateForgotPassword}
+                        title="Voltar e realizar o login"
                         marginBottom={24}
+                        onClick={handleNavigateSignIn}
 
                     />
 
