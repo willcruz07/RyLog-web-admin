@@ -5,9 +5,11 @@ import { FaSignOutAlt, FaFileInvoiceDollar, FaUsers, FaSync, FaChartPie, FaFolde
 import { NavLink } from 'react-router-dom';
 // import { signOut } from 'firebase/auth';
 import ReactToolTip from 'react-tooltip';
+import { signOut } from 'firebase/auth';
 import { useMenuContext } from '../../hooks/MenuContextProvider';
 import Logo from '../../assets/img/Logo.png';
 import { useWindowSize } from '../../hooks/useWindowSize';
+import { auth } from '../../firebase/config';
 
 import './styles.scss';
 
@@ -16,8 +18,7 @@ export const Nav: React.FC = () => {
     const { width } = useWindowSize();
 
     const handleSignOut = () => {
-        // signOut(auth);
-        console.log('SAIR');
+        signOut(auth);
     };
 
     const getStateMenu = useMemo(() => {

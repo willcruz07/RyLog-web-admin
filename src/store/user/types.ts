@@ -7,6 +7,7 @@ export interface IUserWeb {
     id: string;
     name: string;
     email: string;
+    webAccess: boolean;
     isAdmin: boolean;
 }
 
