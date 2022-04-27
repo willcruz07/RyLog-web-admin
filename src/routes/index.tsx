@@ -9,12 +9,21 @@ import { useAppContext } from '../hooks/AppContext';
 import { clearUser, setUser } from '../store/user/actions';
 import { App } from './app.routes';
 import { Auth } from './auth.routes';
+import { useMenuContext } from '../hooks/MenuContextProvider';
+import { checkUserDeviceIsMobile } from '../utils/LIB';
 
 export const Routes: React.FC = () => {
     const [showMessageUser, setShowMessageUser] = useState<boolean>(false);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const { state, dispatch } = useAppContext();
+    const { openMenu } = useMenuContext();
+
+    useEffect(() => {
+        if (!checkUserDeviceIsMobile()) {
+            openMenu();
+        }
+    }, []);
 
     const checkOnAuthStateUser = (user: User | null) => {
         if (user && user.email) {
