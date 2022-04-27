@@ -1,87 +1,119 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useMemo } from 'react';
-import { FaSignOutAlt, FaUserFriends, FaAddressCard, FaFileAlt, FaChartPie } from 'react-icons/fa';
+import { FaSignOutAlt, FaFileInvoiceDollar, FaUsers, FaSync, FaChartPie, FaFolderPlus } from 'react-icons/fa';
 import { NavLink } from 'react-router-dom';
 // import { signOut } from 'firebase/auth';
+import ReactToolTip from 'react-tooltip';
 import { useMenuContext } from '../../hooks/MenuContextProvider';
-// import { auth } from '../../firebase/config';
+import Logo from '../../assets/img/Logo.png';
+import { useWindowSize } from '../../hooks/useWindowSize';
 
 import './styles.scss';
-import { useAppContext } from '../../hooks/AppContext';
 
 export const Nav: React.FC = () => {
-    const { state } = useAppContext();
     const { menuIsOpen, closeMenu } = useMenuContext();
+    const { width } = useWindowSize();
 
     const handleSignOut = () => {
         // signOut(auth);
         console.log('SAIR');
     };
 
-    const getMenuStatus = useMemo(() => (menuIsOpen ? 'openMenu' : ''), [menuIsOpen]);
+    const getStateMenu = useMemo(() => {
+        if (menuIsOpen) {
+            return 'menu-open';
+        }
+
+        if (width && (width >= 700) && !menuIsOpen) {
+            return 'menu-close';
+        }
+
+        return '';
+    }, [menuIsOpen, width]);
 
     return (
         <>
-            <div className={`container-nav ${getMenuStatus}`}>
+            <div className={`container-nav ${getStateMenu}`}>
+                <div className="container-logo">
+                    <img src={Logo} alt="Logo" />
+                    <h4>RyLog</h4>
+                </div>
                 <nav className="container-nav__nav">
                     <ul>
-                        <li>
+                        <li data-tip="Dashboard">
                             <NavLink
                                 to="/dashboard"
                                 className={({ isActive }) => (isActive ? 'active' : '')}
                             >
                                 <FaChartPie />
-                                Dashboard
+                                <span>Dashboard</span>
                             </NavLink>
                         </li>
 
-                        <li>
+                        <li data-tip="Financeiro">
                             <NavLink
-                                to="/exams"
+                                to="/financial"
                                 className={({ isActive }) => (isActive ? 'active' : '')}
                             >
-                                <FaFileAlt />
-                                Exames
+                                <FaFileInvoiceDollar />
+                                <span>Financeiro</span>
                             </NavLink>
                         </li>
 
-                        <li>
+                        <li data-tip="Movimentações">
                             <NavLink
-                                to="/access-request"
+                                to="/movement"
                                 className={({ isActive }) => (isActive ? 'active' : '')}
                             >
-                                <FaAddressCard />
-                                Solicitações de acesso
+                                <FaSync />
+                                <span>Movimentações</span>
                             </NavLink>
                         </li>
 
-                        {state.user.data.isAdmin && (
-                            <li>
-                                <NavLink
-                                    to="/users"
-                                    className={({ isActive }) => (isActive ? 'active' : '')}
-                                >
-                                    <FaUserFriends />
-                                    Usuários
-                                </NavLink>
-                            </li>
-                        )}
+                        <li data-tip="Cadastros">
+                            <NavLink
+                                to="/records"
+                                className={({ isActive }) => (isActive ? 'active' : '')}
+                            >
+                                <FaFolderPlus />
+                                <span>Cadastros</span>
+                            </NavLink>
+                        </li>
 
-                        <li>
+                        <li data-tip="Parceiros">
+                            <NavLink
+                                to="/partners"
+                                className={({ isActive }) => (isActive ? 'active' : '')}
+                            >
+                                <FaUsers />
+                                <span>Parceiros</span>
+                            </NavLink>
+                        </li>
+
+                        <li data-tip="Parceiros">
                             <NavLink
                                 to="/"
                                 onClick={handleSignOut}
                             >
                                 <FaSignOutAlt />
-                                Sair
+                                <span>Sair</span>
                             </NavLink>
                         </li>
 
                     </ul>
                 </nav>
+                {getStateMenu === 'menu-close' && (
+                    <ReactToolTip
+                        backgroundColor="#00044C"
+                        textColor="#FCFCFE"
+                        place="right"
+                        type="dark"
+                        effect="solid"
+                    />
+                )}
             </div>
-            <div onClick={closeMenu} className={`backdrop ${getMenuStatus}`} />
+            <div onClick={closeMenu} className={`backdrop ${getStateMenu}`} />
 
         </>
     );

@@ -24,7 +24,7 @@ export const ForgotPassword: React.FC = () => {
 
                 <div className="container-login__inputs">
                     <Input
-                        label="Email"
+                        label="E-mail"
                         icon="email"
                         onChange={setEmail}
                         value={email}
@@ -41,8 +41,8 @@ export const ForgotPassword: React.FC = () => {
                     />
 
                     <ButtonPrimary
-                        title="Entrar"
-
+                        title="Enviar"
+                        onClick={() => {}}
                     />
                 </div>
             </div>

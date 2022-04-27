@@ -9,8 +9,7 @@
     "lint": "eslint . --ext .ts --ignore-path .gitignore",
     "lint-fix": "yarn lint --fix"
   },
-
-  "dependencies": {    
+  "dependencies": {
     "date-fns": "^2.28.0",
     "firebase": "^9.6.9",
     "formik": "^2.2.9",
@@ -20,12 +19,12 @@
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
     "react-router-dom": "^6.2.1",
+    "react-tooltip": "^4.2.21",
     "recharts": "^2.1.9",
     "sass": "^1.49.8",
-    "underscore": "^1.13.2",            
+    "underscore": "^1.13.2",
     "yup": "^0.32.11"
   },
-
   "devDependencies": {
     "@types/react": "^17.0.33",
     "@types/react-datepicker": "^4.3.4",

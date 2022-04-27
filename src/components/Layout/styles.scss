@@ -2,14 +2,12 @@
 
 .container-grid-layout {
     display: grid;
-    grid-template-columns: $d--240 auto;
-    grid-template-rows: $d--72 auto;
+    grid-template-columns: min-content auto;
+    grid-template-rows: $d--80 auto;
 
     grid-template-areas: 
-    'HEADER HEADER'
-    'NAV CONTENT';
-
-    height: 100vh;
+    'NAV HEADER'
+    'NAV CONTENT';    
 
     @media(max-width: 700px) {        
         grid-template-columns: 100%;

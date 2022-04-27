@@ -9,6 +9,7 @@ import './styles.scss';
 
 export const SignIn: React.FC = () => {
     const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     const navigate = useNavigate();
 
@@ -21,9 +22,11 @@ export const SignIn: React.FC = () => {
             <div className="container-login">
                 <img src={Logo} alt="Logo" />
 
+                <h4>Realize o login para acessar o sistema.</h4>
+
                 <div className="container-login__inputs">
                     <Input
-                        label="Email"
+                        label="E-mail"
                         icon="email"
                         onChange={setEmail}
                         value={email}
@@ -36,8 +39,8 @@ export const SignIn: React.FC = () => {
                         required
                         label="Senha"
                         icon="lock"
-                        onChange={setEmail}
-                        value={email}
+                        onChange={setPassword}
+                        value={password}
                         password
                         type="text"
                         marginBottom={16}
@@ -52,7 +55,7 @@ export const SignIn: React.FC = () => {
 
                     <ButtonPrimary
                         title="Entrar"
-
+                        onClick={() => {}}
                     />
                 </div>
             </div>

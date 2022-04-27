@@ -1,21 +1,30 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
-import { FaBars } from 'react-icons/fa';
+import { FaBars, FaIndent, FaOutdent } from 'react-icons/fa';
 import { useMenuContext } from '../../hooks/MenuContextProvider';
+import { useWindowSize } from '../../hooks/useWindowSize';
 // import { Logo } from '../Logo';
 
 import './styles.scss';
 
 export const Header: React.FC = () => {
-    const { openMenu } = useMenuContext();
+    const { openMenu, closeMenu, menuIsOpen } = useMenuContext();
+    const { width } = useWindowSize();
+
+    const handleActionMenu = useCallback(() => (menuIsOpen ? closeMenu() : openMenu()), [menuIsOpen]);
 
     return (
         <div className="container-header">
-            {/* <Logo /> */}
             <div className="container-header__menu">
-                <button type="button" onClick={openMenu}>
-                    <FaBars />
-                </button>
+                {width && width <= 700 ? (
+                    <button type="button" onClick={openMenu}>
+                        <FaBars />
+                    </button>
+                ) : (
+                    <button type="button" onClick={handleActionMenu}>
+                        {!menuIsOpen ? <FaIndent /> : <FaOutdent /> }
+                    </button>
+                )}
             </div>
         </div>
     );

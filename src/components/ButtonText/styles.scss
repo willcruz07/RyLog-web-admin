@@ -11,6 +11,7 @@
     &:hover {
         color: $color-secondary;
         font-weight: 600;    
+        text-decoration: underline;
     }
 }
 
@@ -19,6 +20,6 @@
     &:hover {
         box-shadow: none;
         filter: none;
-        font-weight: 400;  
+        font-weight: 400;          
     }
 }

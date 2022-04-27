@@ -12,11 +12,11 @@ export const App: React.FC = () => (
     <Layout>
         <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/financeiro" element={<Financial />} />
-            <Route path="/movimentacoes" element={<Movement />} />
-            <Route path="/cadastros" element={<Partners />} />
-            <Route path="/parceiros" element={<Records />} />
-            <Route path="/configuracoes" element={<Settings />} />
+            <Route path="/financial" element={<Financial />} />
+            <Route path="/movement" element={<Movement />} />
+            <Route path="/records" element={<Partners />} />
+            <Route path="/partners" element={<Records />} />
+            <Route path="/settings" element={<Settings />} />
 
             <Route
                 path="*"

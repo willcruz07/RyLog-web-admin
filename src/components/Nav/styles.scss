@@ -4,13 +4,13 @@
     grid-area: NAV;
     
     display: flex;   
+    flex-direction: column;
 
-    background-color: $color-white;
-    border-left: 1px solid $color-gray;
-    box-shadow: 1px 2px 3px $color-gray;
+    background-color: $color-primary-800;
+    border-left: 1px solid $color-gray;    
 
-    height: calc(100vh - $d--72);    
-    
+    height: 100vh;        
+      
     @media(max-width: 700px) {  
         overflow-x: hidden;
         position: fixed;      
@@ -27,17 +27,17 @@
             transition: 0.1s ease-in;
             
             &:hover {
-                background-color: $color-gray;
+                background-color: $color-primary-900;
             }
                      
             a {
                 display: flex;
                 align-items: center;
 
-                font-family: $font-primary;
+                font-family: $font-secondary;
                 font-size: $d--14;
-                font-weight: 600;
-                color: $color-secondary;
+                font-weight: $font-medium;
+                color: $color-white-600;
 
                 padding: $d--16 $d--24;
 
@@ -48,7 +48,7 @@
                     height: $d--16;
                     width: $d--16;
 
-                    color: $color-secondary;
+                    color: $color-white-600;
 
                     margin-right: $d--8;
                 }
@@ -62,9 +62,9 @@
         }
 
         .active {
-            color: $color-secondary;
-            font-weight: 700;
-            background-color: $color-gray;            
+            color: $color-white-600;
+            font-weight: $font-bold;
+            background-color: $color-primary-900;                             
             
             svg {
                 height: $d--20;
@@ -72,14 +72,90 @@
 
                 color: $color-secondary;     
             }
-
         }
     }
 }
 
-.openMenu {
-    width: $d--240;
+.container-logo {
+    display: flex;
+    align-items: center;
+
+    h4 {
+        font-family: $font-secondary;
+        font-size: $d--20;
+        color: $color-white-500;
+        margin-left: $d--24;
+    }
+
+    img {
+        height: auto;
+        width: $d--64;          
+        margin: $d--8 0 $d--24 $d--16;
+        filter: drop-shadow(1px 1px 0.2px $color-white-600);
+    }
 }
+
+    
+.menu-open {
+    width: $d--240;
+    transition: 0.6s ease-in-out;
+    overflow: hidden;
+
+    img {
+        transition: 0.5s all;    
+    }   
+}
+
+.menu-close {
+    width: $d--64; 
+    transition: 0.6s ease-in-out;
+    overflow: hidden;
+
+    img {
+        height: auto;
+        width: $d--48;          
+        margin: $d--24 $d--8;
+        filter: drop-shadow(1px 1px 1px $color-white-600);
+        transition: 0.5s all;        
+    }
+
+    h4, span { 
+        display: none;    
+        transition: 0.5s all;       
+    }            
+    
+    li {             
+        a {     
+            display: flex;       
+            align-items: center;                     
+            justify-content: center;
+
+            padding: $d--16 0;  
+            transition: 0.5s all;               
+
+            svg {                         
+                margin: 0;   
+                width: $d--20;         
+                height: auto;
+                transition: 0.5s all;   
+            }
+        }        
+    }
+
+    .active {
+        color: $color-white-600;
+        font-weight: $font-bold;
+        background-color: $color-primary-900;                             
+        
+        svg {
+            height: auto;
+            width: $d--22;
+
+            color: $color-secondary;     
+        }
+    }
+}
+
 
 .backdrop {
     @media(max-width: 700px) { 
@@ -97,7 +173,7 @@
         -webkit-backdrop-filter: blur(5px);
         transition: 0.3s ease-in-out;
 
-        &.openMenu {
+        &.menu-open {
             opacity: 1;
             visibility: visible;
         }
