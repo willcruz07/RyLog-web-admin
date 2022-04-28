@@ -1,5 +1,7 @@
 import React from 'react';
 
-// import { Container } from './styles';
-
-export const Dashboard: React.FC = () => <div />;
+export const Dashboard: React.FC = () => (
+    <div>
+        <h1>Dashboard</h1>
+    </div>
+);

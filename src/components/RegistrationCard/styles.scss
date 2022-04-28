@@ -1,0 +1,70 @@
+@import '../../styles/variables.scss';
+
+.container-registration-card {
+    display: flex;
+    flex-direction: row;        
+    align-items: center;  
+
+    background-color: $color-white-100;
+    border: 1px solid $color-gray;
+    border-radius: $d--4;
+
+    padding: $d--16;
+
+    cursor: pointer;    
+
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    &:hover {
+        transform: scale(1.02);
+        box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;
+
+        .container-icon {
+            svg {
+                color: $color-secondary-600;
+                transition: 0.2s ease-in-out;
+            }            
+        }    
+        .container-text {
+            h2 {
+                color: $color-secondary-600;
+                transition: 0.2s ease-in-out;
+            }
+        }
+    }
+ 
+    .container-icon {
+        background-color: $color-black-300;
+        border-radius: $d--4;
+        padding: $d--24;
+
+        svg {
+            width: $d--40;
+            height: auto;
+
+            color: $color-gray-800;
+        }
+    }    
+
+    .container-text {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+
+        padding-left: $d--16;        
+
+        h2 {
+            font-family: $font-primary;
+            color: $font-primary-color;
+            font-size: $d--22;            
+        }
+
+        span {
+            font-family: $font-secondary;
+            color: $font-secondary-color;
+            font-size: $d--14;
+            text-align: left;
+        }
+    }    
+
+}

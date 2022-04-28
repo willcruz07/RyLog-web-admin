@@ -1,0 +1,40 @@
+@import '../../styles/variables.scss';
+
+.button-back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    border-radius: $d--4;    
+
+    color: $color-white;
+
+    font-weight: 700;
+    font-family: $font-primary;
+
+    height: $d--40;
+    width: $d--40;
+
+    min-height: $d--40;
+    
+    transition: 0.2s ease-in;
+    
+    svg {
+        width: $d--32;
+        height: auto;
+        color: $color-gray-600;
+    }
+
+    &:hover {
+        filter: brightness(0.3);
+        filter: drop-shadow(1px 1px 1px $color-white-600);        
+    }
+}
+
+.disabled-button-back{
+    cursor: default;
+    &:hover {
+        box-shadow: 1px 1px 2px #ccc;
+        filter: brightness(1);
+    }
+}

@@ -1,0 +1,10 @@
+@import '../../styles/variables.scss';
+
+.container-card {
+    background-color: $color-white-100;
+    border: 1px solid $color-gray;
+    border-radius: $d--4;
+
+    padding: $d--16;
+}
+

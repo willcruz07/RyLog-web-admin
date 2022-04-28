@@ -1,0 +1,9 @@
+@import '../../styles/variables.scss';
+
+.typography {
+    h1 {
+        font-family: $font-secondary;
+        color: $color-black-600;
+        font-weight: $font-bold;
+    }
+}

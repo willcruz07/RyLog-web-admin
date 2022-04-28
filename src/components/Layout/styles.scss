@@ -1,5 +1,7 @@
 @import '../../styles/variables.scss';
 
+
+
 .container-grid-layout {
     display: grid;
     grid-template-columns: min-content auto;
@@ -23,6 +25,8 @@
 
     width: 100%;   
     min-height: $d--600;
+
+    animation: animateShow 0.3s ease-in;
 
     overflow: auto; 
     

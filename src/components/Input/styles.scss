@@ -32,7 +32,7 @@
         justify-content: center;
         
         
-        border-radius: $d--8;
+        border-radius: $d--4;
         padding: $d--16 $d--24;        
         border: $d--1 solid $color-gray;       
 
@@ -69,7 +69,7 @@
         }
 
         ::placeholder {
-            color: $color-secondary;
+            color: $color-black-300;
             opacity: 0.6;
         }
     }

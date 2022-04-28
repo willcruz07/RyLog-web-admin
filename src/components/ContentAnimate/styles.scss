@@ -1,0 +1,21 @@
+@keyframes animateShow {
+    0% {
+        opacity: 0;
+
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.content-animate {    
+    height: 100%;
+    width: 100%;
+    
+    animation: animateShow 0.4s ease-in;
+}

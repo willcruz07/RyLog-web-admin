@@ -1,0 +1,41 @@
+@import '../../../styles/variables.scss';
+
+.container-grid-records {
+    padding-top: $d--24;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax($d--8, $d--300));
+    gap: $d--16;
+}
+
+.container-registration {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    &__header {
+        display: flex;    
+        align-items: center;
+        justify-content: space-between;
+    
+        margin-bottom: $d--24;
+    
+        &__title {
+            display: flex;
+        }
+    }
+
+    &__search {
+        margin-bottom: $d--24;
+    }
+
+    &__grid {
+        flex: 1;
+
+        background-color: $color-white-100;
+        // border: 1px solid $color-gray;
+        border-radius: $d--4;
+
+        
+    }
+}
+

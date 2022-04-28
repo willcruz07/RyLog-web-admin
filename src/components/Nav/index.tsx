@@ -33,6 +33,8 @@ export const Nav: React.FC = () => {
         return '';
     }, [menuIsOpen, width]);
 
+    const tooltipShow = useMemo(() => getStateMenu === 'menu-close', [getStateMenu]);
+
     return (
         <>
             <div className={`container-nav ${getStateMenu}`}>
@@ -42,9 +44,9 @@ export const Nav: React.FC = () => {
                 </div>
                 <nav className="container-nav__nav">
                     <ul>
-                        <li data-tip="Dashboard">
+                        <li data-tip={tooltipShow ? 'Dashboard' : ''}>
                             <NavLink
-                                to="/dashboard"
+                                to="dashboard"
                                 className={({ isActive }) => (isActive ? 'active' : '')}
                             >
                                 <FaChartPie />
@@ -52,9 +54,9 @@ export const Nav: React.FC = () => {
                             </NavLink>
                         </li>
 
-                        <li data-tip="Financeiro">
+                        <li data-tip={tooltipShow ? 'Financeiro' : ''}>
                             <NavLink
-                                to="/financial"
+                                to="financial"
                                 className={({ isActive }) => (isActive ? 'active' : '')}
                             >
                                 <FaFileInvoiceDollar />
@@ -62,9 +64,9 @@ export const Nav: React.FC = () => {
                             </NavLink>
                         </li>
 
-                        <li data-tip="Movimentações">
+                        <li data-tip={tooltipShow ? 'Movimentações' : ''}>
                             <NavLink
-                                to="/movement"
+                                to="movement"
                                 className={({ isActive }) => (isActive ? 'active' : '')}
                             >
                                 <FaSync />
@@ -72,9 +74,9 @@ export const Nav: React.FC = () => {
                             </NavLink>
                         </li>
 
-                        <li data-tip="Cadastros">
+                        <li data-tip={tooltipShow ? 'Cadastros' : ''}>
                             <NavLink
-                                to="/records"
+                                to="records"
                                 className={({ isActive }) => (isActive ? 'active' : '')}
                             >
                                 <FaFolderPlus />
@@ -82,9 +84,9 @@ export const Nav: React.FC = () => {
                             </NavLink>
                         </li>
 
-                        <li data-tip="Parceiros">
+                        <li data-tip={tooltipShow ? 'Parceiros' : ''}>
                             <NavLink
-                                to="/partners"
+                                to="partners"
                                 className={({ isActive }) => (isActive ? 'active' : '')}
                             >
                                 <FaUsers />
@@ -92,7 +94,7 @@ export const Nav: React.FC = () => {
                             </NavLink>
                         </li>
 
-                        <li data-tip="Parceiros">
+                        <li data-tip={tooltipShow ? 'Sair' : ''}>
                             <NavLink
                                 to="/"
                                 onClick={handleSignOut}
@@ -104,15 +106,15 @@ export const Nav: React.FC = () => {
 
                     </ul>
                 </nav>
-                {getStateMenu === 'menu-close' && (
-                    <ReactToolTip
-                        backgroundColor="#00044C"
-                        textColor="#FCFCFE"
-                        place="right"
-                        type="dark"
-                        effect="solid"
-                    />
-                )}
+
+                <ReactToolTip
+                    backgroundColor="#00044C"
+                    textColor="#FCFCFE"
+                    place="right"
+                    type="dark"
+                    effect="solid"
+                />
+
             </div>
             <div onClick={closeMenu} className={`backdrop ${getStateMenu}`} />
 
