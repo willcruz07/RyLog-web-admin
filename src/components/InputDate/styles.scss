@@ -1,0 +1,118 @@
+@import '../../styles/variables.scss';
+
+.container-input-date {
+    display: flex;
+    flex-direction: column;     
+    max-width: $d--160; 
+
+    label {
+        font-family: $font-primary;
+        color: $font-primary-color;
+        font-weight: 600;
+        font-size: $d--14;
+        margin: 0 0 $d--6 $d--8;
+
+        span {
+            color: $color-primary;
+            font-size: $d--12;
+        }
+    }
+
+    svg {
+        margin-right: $d--12;
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;   
+          
+    }
+
+    input[type='date']::-webkit-calendar-picker-indicator{        
+        cursor: pointer;        
+    }
+
+ 
+    &__input {
+        display: flex;
+        flex-direction: row;   
+        align-items: center;
+        justify-content: center;
+        
+        
+        border-radius: $d--8;
+        padding: $d--16 $d--24;        
+        border: $d--1 solid $color-gray;       
+
+        background-color: $color-white;
+        width: 100%;        
+            
+        input {                  
+            width: 100%;
+            outline: none;
+            background: none;
+            border: 0;
+
+            font-family: $font-secondary;
+            color: $color-secondary;
+            font-size: $d--14;
+        }
+
+        input:disabled {
+            opacity: 0.3;
+        }
+
+        span {
+            font-size: $d--14;
+            color: $font-secondary-color;
+            margin-right: $d--4;
+            margin-bottom: $d--1;
+        }
+    
+        svg {
+            font-size: $d--16;
+            margin-right: 0.5rem;
+            color: $color-secondary;
+            opacity: 0.7;
+        }
+
+        ::placeholder {
+            color: $color-secondary;
+            opacity: 0.6;
+        }
+
+        
+    }
+
+    &__tag-error {
+        margin-top: $d--4;
+        font-family: $font-secondary;
+        font-size: $d--12;
+        color: $color-danger;
+    }
+
+    .active  {
+        transition: 0.3s ease-in-out;
+        border-color: $color-secondary;
+        box-shadow: 1px 2px 3px $color-gray;
+    
+        svg {
+            transition: 0.3s ease-in-out;
+            color: $color-secondary;
+        }
+        
+    }
+    
+}
+
+
+.visible-password {    
+    width: $d--20;
+    height: $d--20;
+    
+    color: $color-gray-200;
+    opacity: 0.7;
+
+    cursor: pointer;    
+}

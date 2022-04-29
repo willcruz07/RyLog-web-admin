@@ -1,0 +1,60 @@
+@import '../../styles/variables.scss';
+
+.base-card {
+    display: flex;
+    flex-direction: row;
+
+    justify-content: space-between;
+
+    height: $d--110;
+
+
+    background-color: $color-white;  
+    border: 1px solid $color-gray;
+    border-radius: $d--8; 
+    box-shadow: 1px 1px 2px #ccc ; 
+
+    padding: $d--16;        
+
+    &__row-icon {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;    
+    }
+
+    &__container-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background-color: red;
+        padding: $d--14;
+        border-radius: 100%;    
+        
+        svg {
+            color: $color-white;
+            width: $d--18;
+            height: auto;
+        }
+    }
+
+    &__row-text {
+        display: flex;
+        flex-direction: column;
+
+        align-items: flex-end;
+        justify-content: space-around;        
+
+        h2 {
+            font-family: $font-primary;
+            font-size: $d--20;
+            color: $font-primary-color;
+        }
+
+        span {
+            font-family: $font-secondary;
+            font-size: $d--24;
+            color: $font-secondary-color;
+        }
+    }
+}

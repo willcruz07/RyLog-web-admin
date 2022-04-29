@@ -2,8 +2,10 @@ import { Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import { TRegistrationType } from '../../models/types';
+import { formattedCurrency } from '../../utils/LIB';
 import { ButtonPrimary } from '../ButtonPrimary';
 import { Input } from '../Input';
+import { InputSelectTip } from '../InputSelect';
 import { Modal } from '../Modal';
 
 import './styles.scss';
@@ -31,12 +33,6 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
             .required('Informe o preço do produto')
             .test('price', 'Informe um preço para o produto', (value) =>
                 (value ? value !== '0' : false)),
-
-        thumbnail: Yup.string()
-            .when(['thumbnailFile'], {
-                is: (thumbnailFile: File) => thumbnailFile === undefined,
-                then: Yup.string().required('É necessário selecionar uma para o produto'),
-            }),
     });
 
     const handleSubmitRegister = useCallback(() => {
@@ -47,40 +43,112 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
         <Modal
             isVisible={isVisible}
             onClose={onClose}
-            title="Cadastro de Entregador"
+            title="Adicionar Entregador"
             fullScreenMobile
         >
             <Formik
                 validationSchema={validationSchema}
                 initialValues={{
                     name: '',
-                    Valor: 0,
+                    amount: 0,
                     cpf: '',
                     cnh: '',
                     licensePlate: '',
                     phone: '',
                 }}
-                onSubmit={({ Valor, cnh, cpf, licensePlate, name, phone }) => {
+                onSubmit={({ amount, cnh, cpf, licensePlate, name, phone }) => {
                     handleSubmitRegister();
                 }}
             >
                 {({ handleChange, handleSubmit, values, errors }) => (
-                    <form>
-                        <Input
-                            disabled={loading}
+                    <form className="container-form-register-deliveryman">
+                        <div className="container-form-register-deliveryman__row-1">
+                            <Input
+                                disabled={loading}
+                                required
+                                label="Nome"
+                                onChange={handleChange('name')}
+                                value={values.name}
+                                placeholder="Informe o nome do entregador"
+                                type="text"
+                                marginTop={8}
+                                error={errors.name}
+                            />
+
+                            <Input
+                                currency
+                                disabled={loading}
+                                required
+                                label="Valor"
+                                onChange={handleChange('amount')}
+                                value={formattedCurrency(values.amount)}
+                                placeholder="R$ 0,00"
+                                type="text"
+                                marginTop={8}
+                                error={errors.amount}
+                            />
+                        </div>
+
+                        <div className="container-form-register-deliveryman__row-2">
+                            <Input
+                                disabled={loading}
+                                required
+                                label="CPF"
+                                placeholder="Informe o CPF"
+                                onChange={handleChange('cpf')}
+                                value={values.cpf}
+                                type="text"
+                                marginTop={8}
+                                error={errors.cpf}
+                            />
+
+                            <Input
+                                disabled={loading}
+                                required
+                                label="CNH"
+                                placeholder="Informe o CNH"
+                                onChange={handleChange('cnh')}
+                                value={values.cnh}
+                                type="text"
+                                marginTop={8}
+                                error={errors.cnh}
+                            />
+
+                            <Input
+                                disabled={loading}
+                                required
+                                label="Emplacamento"
+                                placeholder="Informe o Emplacamento"
+                                onChange={handleChange('licensePlate')}
+                                value={values.licensePlate}
+                                type="text"
+                                marginTop={8}
+                                error={errors.licensePlate}
+                            />
+
+                            <Input
+                                disabled={loading}
+                                required
+                                label="Celular"
+                                placeholder="Informe o Celular"
+                                onChange={handleChange('phone')}
+                                value={values.phone}
+                                type="text"
+                                marginTop={8}
+                                error={errors.phone}
+                            />
+                        </div>
+
+                        <InputSelectTip
                             required
-                            label="Nome"
-                            onChange={handleChange('name')}
-                            value={values.name}
-                            placeholder="Informe o nome do produto"
-                            type="text"
-                            marginTop={8}
-                            error={errors.name}
+                            label="Cidades atendidas"
+                            marginTop={16}
+                            marginBottom={24}
                         />
 
                         <ButtonPrimary
-                            title="Cadastrar"
-                            onClick={() => {}}
+                            title="Salvar"
+                            onClick={handleSubmit}
                         />
                     </form>
                 )}

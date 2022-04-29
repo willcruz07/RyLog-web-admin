@@ -68,12 +68,17 @@
             font-size: $d--22;
             font-weight: 700;
             font-family: $font-primary;
-            color: $color-secondary;
+            color: $color-secondary-600;
         }
 
         button {
             font-size: $d--30;
-            color: $color-primary;
+            color: $color-gray-600;
+
+            &:hover {
+                transform: scale(1.1);
+                transition: ease-in-out 0.2s;
+            }
         }
     }
 

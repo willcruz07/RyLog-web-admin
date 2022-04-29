@@ -97,6 +97,32 @@ export const CombineReducer = (reducers: any) => (state: any = {}, action: any) 
     return newState;
 };
 
+export const formattedCurrency = (value: number | string | undefined, exitNumber?: boolean): string | number => {
+    if (!value) {
+        return '';
+    }
+
+    if (typeof value === 'number') {
+        value = value.toString();
+
+        if (value.split('.')[1] === undefined) {
+            value += '00';
+        } else if (value.split('.')[1].length === 1) {
+            value += '0';
+        }
+    }
+
+    value = value.replace(/\D/g, '');
+    value = value.replace(/(\d)(\d{2})$/, '$1,$2');
+    value = value.replace(/(?=(\d{3})+(\D))\B/g, '.');
+
+    if (exitNumber) {
+        return Number(value.replace('.', '').replace(',', '.'));
+    }
+
+    return value;
+};
+
 export const checkUserDeviceIsMobile = (): boolean => (
     !!((navigator.userAgent.match(/Android/i)
     || navigator.userAgent.match(/webOS/i)

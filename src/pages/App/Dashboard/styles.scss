@@ -1,1 +1,50 @@
 @import '../../../styles/variables.scss';
+
+.container-grid-charts {
+    max-width: $d--1200;
+    padding: $d--24;
+
+    
+    &__filters-date {        
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax($d--80, $d--150));
+        gap: $d--16;
+
+        align-items: flex-end;
+
+        max-width: $d--568;     
+        margin-bottom: $d--8;       
+    }
+
+    &__filters {
+        margin-bottom: $d--24;
+
+        span {
+            align-self: center;
+            font-family: $font-secondary;
+            color: $font-primary-color;
+            font-weight: 500;  
+            font-style: italic; 
+        }
+    }
+
+    &__totalizer {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax($d--230, 1fr));
+        gap: $d--16;        
+    }
+
+    &__charts {
+        display: grid;
+
+        grid-template-columns: repeat(auto-fit, minmax($d--400, 2fr));
+        gap: $d--16;
+
+        margin-top: $d--24;
+
+    }
+
+    .button-filtered {
+        width: $d--150;
+    }
+}

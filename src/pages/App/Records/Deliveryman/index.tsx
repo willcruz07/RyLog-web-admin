@@ -10,21 +10,27 @@ import { RegisterDeliveryman } from '../../../../components/RegisterDeliveryman'
 import { TRegistrationType } from '../../../../models/types';
 
 const rows: GridRowsProp = [
-    { id: 1, name: 'Hello', cpf: 'World' },
-    { id: 2, name: 'DataGridPro', cpf: 'is Awesome' },
-    { id: 4, name: 'MUI 2', cpf: 'is Amazing' },
-    { id: 5, name: 'MUI 3', cpf: 'is Amazing' },
-    { id: 6, name: 'MUI 4', cpf: 'is Amazing' },
-    { id: 7, name: 'MUI 5', cpf: 'is Amazing' },
-    { id: 8, name: 'MUI 6', cpf: 'is Amazing' },
-    { id: 9, name: 'MUI 7', cpf: 'is Amazing' },
-    { id: 10, name: 'MUI 8', cpf: 'is Amazing' },
-    { id: 11, name: 'MUI 0', cpf: 'is Amazing' },
+    { id: 1, name: 'Teste 1', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
+    { id: 2, name: 'Teste 2', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
+    { id: 3, name: 'Teste 3', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
+    { id: 4, name: 'Teste 4', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
+    { id: 5, name: 'Teste 5', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
+    { id: 6, name: 'Teste 6', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
+    { id: 7, name: 'Teste 7', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
+    { id: 8, name: 'Teste 8', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
+    { id: 9, name: 'Teste 9', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
+    { id: 10, name: 'Teste 10', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
+    { id: 11, name: 'Teste 10', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
+    { id: 12, name: 'Teste 10', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
+    { id: 13, name: 'Teste 10', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
+
 ];
 
 const columns: GridColDef[] = [
     { field: 'name', headerName: 'Nome', flex: 1 },
     { field: 'cpf', headerName: 'CPF', flex: 1 },
+    { field: 'cnh', headerName: 'CNH', flex: 1 },
+    { field: 'phone', headerName: 'Celular', flex: 1 },
 ];
 
 export const RegistrationOfDeliveryman: React.FC = () => {
