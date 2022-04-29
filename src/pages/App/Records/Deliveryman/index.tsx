@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { GridRowsProp, GridColDef } from '@mui/x-data-grid';
 import { ButtonBack } from '../../../../components/ButtonBack';
 import { ButtonPrimary } from '../../../../components/ButtonPrimary';
@@ -6,6 +6,8 @@ import { Input } from '../../../../components/Input';
 import { Typography } from '../../../../components/Typography';
 import { ContentAnimate } from '../../../../components/ContentAnimate';
 import { Grid } from '../../../../components/DataGrid';
+import { RegisterDeliveryman } from '../../../../components/RegisterDeliveryman';
+import { TRegistrationType } from '../../../../models/types';
 
 const rows: GridRowsProp = [
     { id: 1, name: 'Hello', cpf: 'World' },
@@ -25,46 +27,67 @@ const columns: GridColDef[] = [
     { field: 'cpf', headerName: 'CPF', flex: 1 },
 ];
 
-export const RegistrationOfDeliveryman: React.FC = () => (
-    <ContentAnimate>
-        <div className="container-registration">
-            <div className="container-registration__header">
-                <div className="container-registration__header__title">
-                    <ButtonBack
-                        marginRight={16}
+export const RegistrationOfDeliveryman: React.FC = () => {
+    const [registerIsVisible, setRegisterIsVisible] = useState(false);
+    const [typeRegister, setTypeRegister] = useState<TRegistrationType>('CREATE');
+
+    const handleNewRegister = useCallback(() => {
+        setTypeRegister('CREATE');
+        setRegisterIsVisible(true);
+    }, []);
+
+    return (
+        <>
+            <ContentAnimate>
+                <div className="container-registration">
+                    <div className="container-registration__header">
+                        <div className="container-registration__header__title">
+                            <ButtonBack
+                                marginRight={16}
+                            />
+
+                            <Typography
+                                text="Entregadores"
+                                type="Title"
+                            />
+                        </div>
+
+                        <ButtonPrimary
+                            title="Adicionar"
+                            width={152}
+                            onClick={handleNewRegister}
+                        />
+                    </div>
+
+                    <div className="container-registration__search">
+                        <Input
+                            label="Pesquisar"
+                            onChange={() => {}}
+                            value=""
+                            type="text"
+                            icon="search"
+                            placeholder="Digite sua pesquisa..."
+                        />
+                    </div>
+
+                    <Grid
+                        rows={rows}
+                        columns={columns}
+                        onEdit={(item) => {
+                            console.log(item, 'edit');
+                            setTypeRegister('UPDATE');
+                        }}
+                        onDelete={(item) => console.log(item, 'delete')}
                     />
 
-                    <Typography
-                        text="Entregadores"
-                        type="Title"
-                    />
                 </div>
+            </ContentAnimate>
 
-                <ButtonPrimary
-                    title="Adicionar"
-                    width={152}
-                    onClick={() => {}}
-                />
-            </div>
-
-            <div className="container-registration__search">
-                <Input
-                    label="Pesquisar"
-                    onChange={() => {}}
-                    value=""
-                    type="text"
-                    icon="search"
-                    placeholder="Digite sua pesquisa..."
-                />
-            </div>
-
-            <Grid
-                rows={rows}
-                columns={columns}
-                onEdit={(item) => console.log(item, 'edit')}
-                onDelete={(item) => console.log(item, 'delete')}
+            <RegisterDeliveryman
+                isVisible={registerIsVisible}
+                onClose={setRegisterIsVisible}
+                type={typeRegister}
             />
-
-        </div>
-    </ContentAnimate>
-);
+        </>
+    );
+};
