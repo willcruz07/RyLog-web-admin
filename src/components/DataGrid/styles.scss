@@ -1,0 +1,101 @@
+@import '../../styles/variables.scss';
+
+.container-data-grid {
+    display: flex;
+    flex: 1;
+    background-color: $color-white-100;
+    border-radius: $d--4;   
+
+    &__action {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        width: 100%;
+
+        svg {
+            height: $d--20;
+            width: auto;
+        }
+
+        .icon-edit {
+            color: $color-success-200;
+        }
+
+        .icon-trash {
+            color: $color-danger-200;
+        }
+
+
+    }
+
+    .MuiDataGrid-iconSeparator {
+        display: none;
+    }
+
+    .MuiDataGrid-root .MuiDataGrid-cell:focus-within {
+        outline: none;
+    }
+
+    .MuiDataGrid-root .MuiDataGrid-columnHeader:focus-within {
+        outline: none;
+    }
+
+    .MuiDataGrid-root .MuiDataGrid-columnHeaders {
+        background-color: $color-primary-600;
+    }
+
+    .MuiDataGrid-root .MuiDataGrid-columnHeaderTitle {
+        color: $color-white-300;
+        font-weight: $font-bold;
+        font-family: $font-primary;
+        font-size: $d--14;
+    }
+
+     .MuiSvgIcon-root {
+        color: $color-gray;
+    }
+
+    .MuiDataGrid-cellContent {
+        font-family: $font-secondary;
+        font-size: $d--14;
+        color: $color-black-600;
+    } 
+        
+    .MuiDataGrid-root .MuiDataGrid-row:nth-child(even) {
+        background: $color-gray-200;
+
+        &:hover {
+            background: $color-gray-300;
+        }
+    }
+
+    .MuiDataGrid-root .MuiDataGrid-row:nth-child(odd) {
+        background: $color-gray-100;
+
+        &:hover {
+            background: $color-gray-300;
+        }
+    }    
+
+    .MuiPaginationItem-root {
+        color: $color-black-600;
+        font-family: $font-secondary;
+        font-weight: $font-bold;
+
+        &:hover {
+            background-color: $color-primary-100;            
+        }
+    }
+
+    .MuiPaginationItem-page.Mui-selected {
+        background-color: $color-primary-700;
+        color: $color-gray-300;
+        transition: opacity 0.8s;
+
+        &:hover {
+            background-color: $color-primary-700;
+            opacity: 0.7;
+        }
+    }
+   
+}

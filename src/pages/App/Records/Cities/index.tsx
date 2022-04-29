@@ -1,8 +1,9 @@
-import { DataGrid, GridColDef, GridRowsProp } from '@mui/x-data-grid';
+import { GridColDef, GridRowsProp } from '@mui/x-data-grid';
 import React from 'react';
 import { ButtonBack } from '../../../../components/ButtonBack';
 import { ButtonPrimary } from '../../../../components/ButtonPrimary';
 import { ContentAnimate } from '../../../../components/ContentAnimate';
+import { Grid } from '../../../../components/DataGrid';
 import { Input } from '../../../../components/Input';
 import { Typography } from '../../../../components/Typography';
 
@@ -13,8 +14,8 @@ const rows: GridRowsProp = [
 ];
 
 const columns: GridColDef[] = [
-    { field: 'name', headerName: 'Nome', width: 150 },
-    { field: 'cpf', headerName: 'CPF', width: 150 },
+    { field: 'name', headerName: 'Nome', flex: 1 },
+    { field: 'cpf', headerName: 'CPF', flex: 1 },
 ];
 
 export const RegistrationOfCities: React.FC = () => (
@@ -49,14 +50,10 @@ export const RegistrationOfCities: React.FC = () => (
                 />
             </div>
 
-            <div className="container-registration__grid">
-                <DataGrid
-                    disableColumnFilter
-                    disableColumnMenu
-                    rows={rows}
-                    columns={columns}
-                />
-            </div>
+            <Grid
+                rows={rows}
+                columns={columns}
+            />
 
         </div>
     </ContentAnimate>
