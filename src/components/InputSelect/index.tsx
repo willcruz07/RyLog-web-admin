@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback } from 'react';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { Theme, useTheme } from '@mui/material/styles';
 import MenuItem from '@mui/material/MenuItem';
@@ -8,12 +8,10 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 
 import './styles.scss';
 
-const names = [
-    'Rio de Janeiro - Arraial do Cabo',
-    'Petropolis - Teresópolis',
-    'Teresópolis - Petropolis',
-    'Cabo Frio - Arraial do Cabo',
-];
+export interface ISelectItems {
+    label: string;
+    value: string;
+}
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -42,20 +40,24 @@ interface ISelectProps {
     marginBottom?: number;
     marginRight?: number;
     marginTop?: number;
+    items: ISelectItems[];
+    setSelectedValues(values: string[]): void;
+    selectedValues: string[];
+    multiple: boolean;
 }
 
-export const InputSelectTip: React.FC<ISelectProps> = ({ label, required, marginBottom, marginRight, marginTop }) => {
-    const [personName, setPersonName] = useState<string[]>([]);
-
+export const InputSelectTip: React.FC<ISelectProps> = ({ multiple, items, label, required, marginBottom, marginRight, marginTop, selectedValues, setSelectedValues }) => {
     const theme = useTheme();
 
-    const handleChange = (event: SelectChangeEvent<typeof personName>) => {
+    const handleChange = (event: SelectChangeEvent<typeof selectedValues>) => {
         const { target: { value } } = event;
-        setPersonName(
+        setSelectedValues(
             // On autofill we get a stringified value.
             typeof value === 'string' ? value.split(',') : value,
         );
     };
+
+    const getSelectedValue = useCallback((id: string): string => items.filter((value) => value.value === id)[0].label || '', []);
 
     return (
         <div
@@ -70,26 +72,26 @@ export const InputSelectTip: React.FC<ISelectProps> = ({ label, required, margin
             )}
             <Select
                 id="demo-multiple-chip"
-                multiple
-                value={personName}
+                multiple={multiple}
+                value={selectedValues}
                 onChange={handleChange}
                 input={<OutlinedInput id="select-multiple-chip" />}
                 renderValue={(selected) => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                         {selected.map((value) => (
-                            <Chip key={value} label={value} />
+                            <Chip key={value} label={getSelectedValue(value)} />
                         ))}
                     </Box>
                 )}
                 MenuProps={MenuProps}
             >
-                {names.map((name) => (
+                {items.map((value) => (
                     <MenuItem
-                        key={name}
-                        value={name}
-                        style={getStyles(name, personName, theme)}
+                        key={value.value}
+                        value={value.value}
+                        style={getStyles(value.label, selectedValues, theme)}
                     >
-                        {name}
+                        {value.label}
                     </MenuItem>
                 ))}
             </Select>
