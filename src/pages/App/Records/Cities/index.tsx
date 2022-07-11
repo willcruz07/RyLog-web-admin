@@ -1,5 +1,6 @@
 import { GridColDef, GridRowsProp } from '@mui/x-data-grid';
-import React, { useCallback, useState } from 'react';
+import { collection, onSnapshot, query } from 'firebase/firestore';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ButtonBack } from '../../../../components/ButtonBack';
 import { ButtonPrimary } from '../../../../components/ButtonPrimary';
 import { ContentAnimate } from '../../../../components/ContentAnimate';
@@ -7,15 +8,17 @@ import { Grid } from '../../../../components/DataGrid';
 import { Input } from '../../../../components/Input';
 import { RegisterCollectionAndDeliveries } from '../../../../components/RegisterCollectionAndDeliveries';
 import { Typography } from '../../../../components/Typography';
+import { dbFirestore } from '../../../../firebase/config';
 import { TRegistrationType } from '../../../../models/types';
+import { formattedCurrency } from '../../../../utils/LIB';
 
-const rows: GridRowsProp = [
-    { id: 1, from: 'Rio de Janeiro', to: 'Teresópolis', collectionValue: 'R$ 8,70', deliveryValue: 'R$ 9,10' },
-    { id: 2, from: 'Teresópolis', to: 'Friburgo', collectionValue: 'R$ 50,00', deliveryValue: 'R$ 91,10' },
-    { id: 3, from: 'Rio de Janeiro', to: 'Friburgo', collectionValue: 'R$ 8,70', deliveryValue: 'R$ 9,10' },
-    { id: 4, from: 'Petropolis', to: 'Teresópolis', collectionValue: 'R$ 8,70', deliveryValue: 'R$ 9,10' },
-
-];
+interface ICity {
+    id: string;
+    from: string;
+    to: string;
+    collectionValue: string;
+    deliveryValue: string;
+}
 
 const columns: GridColDef[] = [
     { field: 'from', headerName: 'De', flex: 1 },
@@ -27,6 +30,47 @@ const columns: GridColDef[] = [
 export const RegistrationOfCities: React.FC = () => {
     const [registerIsVisible, setRegisterIsVisible] = useState(false);
     const [typeRegister, setTypeRegister] = useState<TRegistrationType>('CREATE');
+
+    const [collectionsAndDeliveries, setCollectionsAndDeliveries] = useState<GridRowsProp<ICity>>([]);
+
+    useEffect(() => {
+        const queryCollection = query(collection(dbFirestore, 'coletas_entregas'));
+        const dataList = onSnapshot(queryCollection, (snapShot) => {
+            snapShot.docChanges().forEach((change) => {
+                const doc = Object.assign(change.doc.data(), { id: change.doc.id });
+
+                switch (change.type) {
+                    case 'added':
+                        setCollectionsAndDeliveries((prevState) => [...prevState, {
+                            id: doc.id,
+                            collectionValue: formattedCurrency(doc.valorDaColeta),
+                            deliveryValue: formattedCurrency(doc.valorDaEntrega),
+                            from: doc.origem.nome,
+                            to: doc.destino.nome,
+                        } as ICity]);
+                        break;
+
+                    case 'removed':
+                        setCollectionsAndDeliveries((prevState) => prevState.filter((data) => data.id !== doc.id));
+                        break;
+
+                    case 'modified': {
+                        setCollectionsAndDeliveries((prevState) => prevState.filter((data) => data.id !== doc.id));
+                        setCollectionsAndDeliveries((prevState) => [...prevState, {
+                            id: doc.id,
+                            collectionValue: formattedCurrency(doc.valorDaColeta),
+                            deliveryValue: formattedCurrency(doc.valorDaEntrega),
+                            from: doc.origem.nome,
+                            to: doc.destino.nome,
+                        } as ICity]);
+                        break;
+                    }
+                }
+            });
+        });
+
+        return () => dataList();
+    }, []);
 
     const handleNewRegister = useCallback(() => {
         setTypeRegister('CREATE');
@@ -67,7 +111,7 @@ export const RegistrationOfCities: React.FC = () => {
                     </div>
 
                     <Grid
-                        rows={rows}
+                        rows={collectionsAndDeliveries}
                         columns={columns}
                         onDelete={(item) => console.log(item, 'delete')}
                         onEdit={(item) => console.log(item, 'edit')}
@@ -81,6 +125,7 @@ export const RegistrationOfCities: React.FC = () => {
                 onClose={setRegisterIsVisible}
                 type={typeRegister}
             />
+
         </>
     );
 };

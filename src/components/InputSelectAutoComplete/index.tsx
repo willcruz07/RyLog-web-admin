@@ -17,9 +17,10 @@ interface ISelectProps {
     items: ISelectItems[];
     setSelectedValues(values: string): void;
     selectedValues: string;
+    placeholder?: string;
 }
 
-export const InputSelectAutoComplete: React.FC<ISelectProps> = ({ items, label, required, marginBottom, marginRight, marginTop, selectedValues, setSelectedValues }) => (
+export const InputSelectAutoComplete: React.FC<ISelectProps> = ({ items, placeholder, label, required, marginBottom, marginRight, marginTop, selectedValues, setSelectedValues }) => (
     <div
         style={{ marginTop, marginRight, marginBottom }}
         className="container-input-select"
@@ -35,11 +36,14 @@ export const InputSelectAutoComplete: React.FC<ISelectProps> = ({ items, label, 
             disablePortal
             id="combo-box-demo"
             options={items}
+            placeholder={placeholder}
+            onChange={(_, value) => setSelectedValues(value?.value || '')}
             renderInput={(params) => (
                 <TextField
+                    className="auto-complete"
                     {...params}
                     value={selectedValues}
-                    onChange={(e) => setSelectedValues(e.target.value)}
+                    placeholder={placeholder}
                 />
             )}
         />

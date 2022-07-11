@@ -20,7 +20,8 @@
     &__row-2 {
         display: grid;
         grid-template-columns: repeat(2, 1fr);   
-        gap: $d--8;               
+        gap: $d--8;             
+        margin-top: $d--4;  
 
     }
    

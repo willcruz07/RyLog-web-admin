@@ -1,14 +1,16 @@
 import { Formik } from 'formik';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import * as Yup from 'yup';
 import { getCities, ICity } from '../../firebase/firestore/Cities';
+import { setCollectAndDeliveries } from '../../firebase/firestore/CollectAndDeliveries';
 import { TRegistrationType } from '../../models/types';
-import { formattedCPF, formattedLicensePlate, formattedPhone } from '../../utils/LIB';
+import { formattedCurrency } from '../../utils/LIB';
 import { ButtonPrimary } from '../ButtonPrimary';
 import { Input } from '../Input';
-import { InputSelectTip, ISelectItems } from '../InputSelect';
+import { ISelectItems } from '../InputSelect';
 import { InputSelectAutoComplete } from '../InputSelectAutoComplete';
 import { LoaderFullScreen } from '../Loader';
+import { Message } from '../Message';
 import { Modal } from '../Modal';
 
 import './styles.scss';
@@ -19,58 +21,77 @@ interface IRegisterCollectionAndDeliveries {
     type: TRegistrationType;
 }
 
-const city = [
-    {
-        label: 'Rio de Janeiro - Arraial do cabo',
-        value: '1',
-    },
-    {
-        label: 'Teresópolis - Friburgo',
-        value: '2',
-    },
-    {
-        label: 'Friburgo - Petrópolis',
-        value: '3',
-    },
-];
+interface IData {
+    from: string;
+    to: string;
+    deliveryAmount: string;
+    collectionAmount: string;
+}
 
 export const RegisterCollectionAndDeliveries: React.FC<IRegisterCollectionAndDeliveries> = ({ isVisible, onClose }) => {
-    const [loading, setLoading] = useState(false);
     const [cities, setCities] = useState<ISelectItems[]>([]);
+    const [listOfCity, setListOfCity] = useState<ICity[]>([]);
+
+    const [loading, setLoading] = useState<boolean>(false);
+    const [messageIsVisible, setMessageIsVisible] = useState<boolean>(false);
+    const [message, setMessage] = useState('');
 
     useEffect(() => {
-        if (isVisible) {
-            loadCities();
-        }
-    }, [isVisible]);
+        loadCities();
+    }, []);
 
     const loadCities = async (): Promise<void> => {
-        setLoading(true);
+        const city = await getCities();
+        if (city) {
+            setListOfCity(city);
 
-        const listOfCities = await getCities();
-
-        if (listOfCities) {
-            listOfCities.forEach((item) => {
-                setCities((prevState) => [...prevState, {
-                    label: item.name,
-                    value: item.id,
-                }]);
-            });
+            if (city) {
+                city.forEach((item) => {
+                    setCities((prevState) => [...prevState, {
+                        label: item.name,
+                        value: item.id,
+                    }]);
+                });
+            }
         }
-
-        setLoading(false);
     };
 
-    console.log(cities);
-
     const validationSchema = Yup.object().shape({
-        name: Yup.string()
-            .required('Informe o nome do entregador'),
+        from: Yup.string()
+            .required('Informe a cidade origem'),
+        to: Yup.string()
+            .required('Informe a cidade destino'),
+        deliveryAmount: Yup.string()
+            .required('Informe o valor da entrega'),
+        collectionAmount: Yup.string()
+            .required('Informe o valor de coleta'),
     });
 
-    const handleSubmitRegister = useCallback(() => {
+    const handleSubmitRegister = useCallback(async (data: IData) => {
+        setLoading(true);
 
-    }, []);
+        setCollectAndDeliveries({
+            to: listOfCity.filter((item) => item.id === data.to)[0],
+            from: listOfCity.filter((item) => item.id === data.from)[0],
+            collectionAmount: formattedCurrency(data.collectionAmount, true) as number,
+            deliveryAmount: formattedCurrency(data.deliveryAmount, true) as number,
+        })
+            .catch((error) => {
+                setMessage(error);
+                setMessageIsVisible(true);
+            })
+            .then(() => {
+                onClose(false);
+            })
+            .finally(() => setLoading(false));
+    }, [listOfCity]);
+
+    const getCitieOrdenaded = useMemo(() => cities.sort((a, b) => {
+        if (a.label.toLowerCase() > b.label.toLowerCase()) {
+            return 1;
+        }
+        return -1;
+    }), [cities]);
 
     return (
         <Modal
@@ -84,138 +105,82 @@ export const RegisterCollectionAndDeliveries: React.FC<IRegisterCollectionAndDel
                 initialValues={{
                     from: '',
                     to: '',
-                    deliveryAmount: 0,
-                    collectionAmount: 0,
+                    deliveryAmount: '',
+                    collectionAmount: '',
                 }}
-                onSubmit={({ cnh, cpf, licensePlate, name, phone, citiesServed }) => {
-                    console.log({
-                        cnh,
-                        cpf,
-                        licensePlate,
-                        name,
-                        phone,
-                        citiesServed,
-
+                onSubmit={({ collectionAmount, deliveryAmount, from, to }) => {
+                    handleSubmitRegister({
+                        collectionAmount,
+                        deliveryAmount,
+                        from,
+                        to,
                     });
-                    // handleSubmitRegister();
                 }}
             >
-                {({ handleChange, handleSubmit, values, errors, setFieldValue }) => (
+                {({ handleChange, handleSubmit, values, errors }) => (
                     <form className="container-form-register-deliveryman">
-                        {/* <InputSelectTip
-                            required
-                            label="De"
-                            marginTop={16}
-                            marginBottom={24}
-                            items={cities}
-                            selectedValues={values.from}
-                            setSelectedValues={(values) => setFieldValue('from', values)}
-                            multiple={false}
-                        /> */}
-
                         <div className="container-form-register-deliveryman__row-2">
-
                             <InputSelectAutoComplete
-                                items={cities}
+                                items={getCitieOrdenaded}
                                 label="De"
                                 required
+                                placeholder="Informe a cidade de origem"
                                 selectedValues={values.from}
                                 setSelectedValues={handleChange('from')}
                             />
 
                             <InputSelectAutoComplete
-                                items={cities}
-                                label="De"
+                                items={getCitieOrdenaded}
+                                label="Para"
                                 required
                                 selectedValues={values.to}
+                                placeholder="Informe a cidade de destino"
                                 setSelectedValues={handleChange('to')}
                             />
                         </div>
-                        {/* <Input
-                            disabled={loading}
-                            required
-                            label="Nome"
-                            onChange={handleChange('name')}
-                            value={values.name}
-                            placeholder="Informe o nome do entregador"
-                            type="text"
-                            marginTop={8}
-                            error={errors.name}
-                        /> */}
 
-                        {/* <div className="container-form-register-deliveryman__row-2">
+                        <div className="container-form-register-deliveryman__row-2">
                             <Input
-                                disabled={loading}
+                                currency
                                 required
-                                label="CPF"
-                                placeholder="Informe o CPF"
-                                onChange={handleChange('cpf')}
-                                maxLength={14}
-                                value={formattedCPF(values.cpf)}
+                                label="Valor da coleta"
+                                placeholder="Informe o valor da coleta"
+                                onChange={handleChange('collectionAmount')}
+                                value={formattedCurrency(values.collectionAmount)}
                                 type="text"
                                 marginTop={8}
-                                error={errors.cpf}
+                                error={errors.collectionAmount}
                             />
 
                             <Input
-                                disabled={loading}
+                                currency
                                 required
-                                label="CNH"
-                                placeholder="Informe o CNH"
-                                onChange={handleChange('cnh')}
-                                value={values.cnh}
-                                maxLength={11}
+                                label="Valor da entrega"
+                                placeholder="Informe o valor da entrega"
+                                onChange={handleChange('deliveryAmount')}
+                                value={formattedCurrency(values.deliveryAmount)}
                                 type="text"
                                 marginTop={8}
-                                error={errors.cnh}
+                                error={errors.deliveryAmount}
                             />
-
-                            <Input
-                                disabled={loading}
-                                required
-                                label="Emplacamento"
-                                placeholder="Informe o Emplacamento"
-                                onChange={handleChange('licensePlate')}
-                                value={formattedLicensePlate(values.licensePlate)}
-                                type="text"
-                                maxLength={8}
-                                marginTop={8}
-                                error={errors.licensePlate}
-                            />
-
-                            <Input
-                                disabled={loading}
-                                required
-                                label="Celular"
-                                placeholder="Informe o Celular"
-                                onChange={handleChange('phone')}
-                                value={formattedPhone(values.phone)}
-                                type="text"
-                                marginTop={8}
-                                maxLength={15}
-                                error={errors.phone}
-                            />
-                        </div> */}
-
-                        {/* <InputSelectTip
-                            required
-                            label="Cidades atendidas"
-                            marginTop={16}
-                            marginBottom={24}
-                            items={city}
-                            selectedValues={values.citiesServed}
-                            setSelectedValues={(values) => setFieldValue('citiesServed', values)}
-                        /> */}
+                        </div>
 
                         <ButtonPrimary
                             title="Salvar"
                             onClick={handleSubmit}
+                            marginTop={32}
                         />
                     </form>
                 )}
             </Formik>
+            <LoaderFullScreen isVisible={loading} />
 
-            {/* <LoaderFullScreen isVisible={loading} /> */}
+            <Message
+                isVisible={messageIsVisible}
+                onClose={setMessageIsVisible}
+                type="DANGER"
+                message={message}
+            />
         </Modal>
     );
 };

@@ -42,4 +42,22 @@
             color: $color-secondary-300;            
         }
     }
+
+    .MuiOutlinedInput-input, 
+    .MuiInputBase-input, .MuiInputBase-inputAdornedEnd,
+    .MuiAutocomplete-input, 
+    .MuiAutocomplete-inputFocused, 
+    .css-nxo287-MuiInputBase-input-MuiOutlinedInput-input {
+        font-family: $font-secondary;
+        font-size: $d--14;
+        color: $font-primary-color;                
+    }
+
+    .auto-complete {
+
+        ::placeholder {
+            color: $color-black-300;
+            opacity: 0.6;
+        }
+    }
 }

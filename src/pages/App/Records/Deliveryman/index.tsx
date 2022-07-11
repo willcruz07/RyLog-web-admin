@@ -1,5 +1,6 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { GridRowsProp, GridColDef } from '@mui/x-data-grid';
+import { collection, onSnapshot, query } from 'firebase/firestore';
 import { ButtonBack } from '../../../../components/ButtonBack';
 import { ButtonPrimary } from '../../../../components/ButtonPrimary';
 import { Input } from '../../../../components/Input';
@@ -8,23 +9,9 @@ import { ContentAnimate } from '../../../../components/ContentAnimate';
 import { Grid } from '../../../../components/DataGrid';
 import { RegisterDeliveryman } from '../../../../components/RegisterDeliveryman';
 import { TRegistrationType } from '../../../../models/types';
-
-const rows: GridRowsProp = [
-    { id: 1, name: 'Teste 1', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
-    { id: 2, name: 'Teste 2', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
-    { id: 3, name: 'Teste 3', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
-    { id: 4, name: 'Teste 4', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
-    { id: 5, name: 'Teste 5', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
-    { id: 6, name: 'Teste 6', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
-    { id: 7, name: 'Teste 7', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
-    { id: 8, name: 'Teste 8', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
-    { id: 9, name: 'Teste 9', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
-    { id: 10, name: 'Teste 10', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
-    { id: 11, name: 'Teste 10', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
-    { id: 12, name: 'Teste 10', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
-    { id: 13, name: 'Teste 10', cpf: '123.234.123-44', cnh: '23312332', phone: '(21) 98312-4522' },
-
-];
+import { dbFirestore } from '../../../../firebase/config';
+import { formattedCPF, formattedPhone } from '../../../../utils/LIB';
+import { IGetDeliveryman } from '../../../../firebase/firestore/Deliveryman';
 
 const columns: GridColDef[] = [
     { field: 'name', headerName: 'Nome', flex: 1 },
@@ -36,6 +23,57 @@ const columns: GridColDef[] = [
 export const RegistrationOfDeliveryman: React.FC = () => {
     const [registerIsVisible, setRegisterIsVisible] = useState(false);
     const [typeRegister, setTypeRegister] = useState<TRegistrationType>('CREATE');
+
+    const [deliveryman, setDeliveryman] = useState<GridRowsProp<IGetDeliveryman>>([]);
+
+    useEffect(() => {
+        const queryCollection = query(collection(dbFirestore, 'entregadores'));
+        const dataList = onSnapshot(queryCollection, (snapShot) => {
+            snapShot.docChanges().forEach((change) => {
+                const doc = Object.assign(change.doc.data(), { id: change.doc.id });
+
+                switch (change.type) {
+                    case 'added':
+                        setDeliveryman((prevState) => [...prevState, {
+                            id: doc.id,
+                            cnh: doc.cnh,
+                            cpf: formattedCPF(doc.cpf),
+                            name: doc.nome,
+                            phone: formattedPhone(doc.celular),
+                            licensePlate: doc.emplacamento,
+                            citiesServed: doc.cidadesAtendidas.map((item: any) => ({
+                                citiesName: item.nome,
+                                collectionAndDeliveryId: item.idCidade,
+                            })),
+                        }]);
+                        break;
+
+                    case 'removed':
+                        setDeliveryman((prevState) => prevState.filter((data) => data.id !== doc.id));
+                        break;
+
+                    case 'modified': {
+                        setDeliveryman((prevState) => prevState.filter((data) => data.id !== doc.id));
+                        setDeliveryman((prevState) => [...prevState, {
+                            id: doc.id,
+                            cnh: doc.cnh,
+                            cpf: formattedCPF(doc.cpf),
+                            name: doc.nome,
+                            phone: formattedPhone(doc.celular),
+                            licensePlate: doc.emplacamento,
+                            citiesServed: doc.cidadesAtendidas.map((item: any) => ({
+                                citiesName: item.nome,
+                                collectionAndDeliveryId: item.idCidade,
+                            })),
+                        }]);
+                        break;
+                    }
+                }
+            });
+        });
+
+        return () => dataList();
+    }, []);
 
     const handleNewRegister = useCallback(() => {
         setTypeRegister('CREATE');
@@ -77,7 +115,7 @@ export const RegistrationOfDeliveryman: React.FC = () => {
                     </div>
 
                     <Grid
-                        rows={rows}
+                        rows={deliveryman}
                         columns={columns}
                         onEdit={(item) => {
                             console.log(item, 'edit');
