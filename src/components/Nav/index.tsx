@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 import { FaSignOutAlt, FaFileInvoiceDollar, FaUsers, FaSync, FaChartPie, FaFolderPlus } from 'react-icons/fa';
 import { NavLink } from 'react-router-dom';
 // import { signOut } from 'firebase/auth';
-import ReactToolTip from 'react-tooltip';
+// import ReactToolTip from 'react-tooltip';
 import { signOut } from 'firebase/auth';
 import { useMenuContext } from '../../hooks/MenuContextProvider';
 import Logo from '../../assets/img/Logo.png';
@@ -107,13 +107,13 @@ export const Nav: React.FC = () => {
                     </ul>
                 </nav>
 
-                <ReactToolTip
+                {/* <ReactToolTip
                     backgroundColor="#00044C"
                     textColor="#FCFCFE"
                     place="right"
                     type="dark"
                     effect="solid"
-                />
+                /> */}
 
             </div>
             <div onClick={closeMenu} className={`backdrop ${getStateMenu}`} />

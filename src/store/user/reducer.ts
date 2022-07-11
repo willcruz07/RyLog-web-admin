@@ -7,6 +7,7 @@ export const userInitialState: IUserState = {
         email: '',
         isAdmin: false,
         name: '',
+        webAccess: false,
     },
 };
 
