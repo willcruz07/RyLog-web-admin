@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { DataGrid, GridCellParams, GridRowsProp, GridColDef, useGridApiContext, useGridSelector, gridPageSelector, gridPageCountSelector } from '@mui/x-data-grid';
 import Pagination from '@mui/material/Pagination';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import Tooltip from '@mui/material/Tooltip';
 import { Colors } from '../../styles/variables';
 
 import './styles.scss';
@@ -44,29 +45,33 @@ export const Grid: React.FC<IDataGridProps> = ({ columns, rows, onDelete, onEdit
                 renderCell: (params: GridCellParams) => (
                     <div className="container-data-grid__action">
                         {!!onEdit && (
-                            <button
-                                data-tip="Editar"
-                                type="button"
-                                onClick={() => onEdit(params.row)}
-                            >
-                                <FaEdit
+                            <Tooltip title="Editar">
+                                <button
                                     data-tip="Editar"
-                                    className="icon-edit"
-                                />
-                            </button>
+                                    type="button"
+                                    onClick={() => onEdit(params.row)}
+                                >
+                                    <FaEdit
+                                        data-tip="Editar"
+                                        className="icon-edit"
+                                    />
+                                </button>
+                            </Tooltip>
                         )}
 
                         {!!onDelete && (
-                            <button
-                                data-tip="Deletar"
-                                type="button"
-                                onClick={() => onDelete(params.row)}
-                            >
-                                <FaTrash
+                            <Tooltip title="Deletar">
+                                <button
                                     data-tip="Deletar"
-                                    className="icon-trash"
-                                />
-                            </button>
+                                    type="button"
+                                    onClick={() => onDelete(params.row)}
+                                >
+                                    <FaTrash
+                                        data-tip="Deletar"
+                                        className="icon-trash"
+                                    />
+                                </button>
+                            </Tooltip>
                         )}
 
                     </div>

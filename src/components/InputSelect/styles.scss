@@ -18,9 +18,17 @@
         }
     }
 
+    .placeholder {
+        color: $color-black-300;
+        opacity: 0.6;
+        font-size: $d--14;
+        font-family: $font-secondary;
+        margin-left: $d--8;
+    }
+
     .MuiOutlinedInput-root {
         fieldset {
-            border-color: $color-gray;
+            border-color: $color-gray;            
         }
 
         &:hover fieldset {
@@ -41,5 +49,23 @@
             transition: 0.3s ease-in-out;
             color: $color-secondary-300;            
         }
+    }
+
+    .MuiBox-root {
+        .MuiChip-root {
+            background: $color-secondary-100;
+
+            font-family: $font-secondary;
+            font-weight: $font-medium;
+
+            color: $color-secondary-900;
+        }
+    }
+}
+
+.MuiList-root {
+    li {
+        font-family: $font-secondary;
+        color: $font-primary-color;
     }
 }

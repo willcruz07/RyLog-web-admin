@@ -38,13 +38,14 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
 
 interface ISelectProps {
     label: string;
+    placeholder: string;
     required?: boolean;
     marginBottom?: number;
     marginRight?: number;
     marginTop?: number;
 }
 
-export const InputSelectTip: React.FC<ISelectProps> = ({ label, required, marginBottom, marginRight, marginTop }) => {
+export const InputSelectTip: React.FC<ISelectProps> = ({ label, required, marginBottom, marginRight, marginTop, placeholder }) => {
     const [personName, setPersonName] = useState<string[]>([]);
 
     const theme = useTheme();
@@ -71,16 +72,25 @@ export const InputSelectTip: React.FC<ISelectProps> = ({ label, required, margin
             <Select
                 id="demo-multiple-chip"
                 multiple
+                displayEmpty
                 value={personName}
                 onChange={handleChange}
+                placeholder="ww"
                 input={<OutlinedInput id="select-multiple-chip" />}
-                renderValue={(selected) => (
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {selected.map((value) => (
-                            <Chip key={value} label={value} />
-                        ))}
-                    </Box>
-                )}
+                renderValue={(selected) => {
+                    if (selected.length === 0) {
+                        return (
+                            <span className="placeholder">{placeholder}</span>
+                        );
+                    }
+                    return (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                            {selected.map((value) => (
+                                <Chip key={value} label={value} />
+                            ))}
+                        </Box>
+                    );
+                }}
                 MenuProps={MenuProps}
             >
                 {names.map((name) => (

@@ -144,6 +144,7 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
                             label="Cidades atendidas"
                             marginTop={16}
                             marginBottom={24}
+                            placeholder="Informe as cidade atendidas"
                         />
 
                         <ButtonPrimary
