@@ -1,0 +1,45 @@
+@import '../../styles/variables.scss';
+
+.container-input-select {
+    display: flex;
+    flex-direction: column;  
+    width: 100%;  
+
+    label {
+        font-family: $font-primary;
+        color: $font-primary-color;
+        font-weight: 600;
+        font-size: $d--14;
+        margin: 0 0 $d--6 $d--8;
+
+        span {
+            color: $color-secondary;
+            font-size: $d--12;
+        }
+    }
+
+    .MuiOutlinedInput-root {
+        fieldset {
+            border-color: $color-gray;
+        }
+
+        &:hover fieldset {
+            border-color: $color-gray;        
+        }
+
+        svg {
+            color: $font-primary-color;
+        }
+
+        &.Mui-focused fieldset {            
+            transition: 0.3s ease-in-out;
+            border:1px solid $color-secondary;
+            box-shadow: 1px 2px 3px $color-gray;                     
+        }
+
+        &.Mui-focused svg {            
+            transition: 0.3s ease-in-out;
+            color: $color-secondary-300;            
+        }
+    }
+}

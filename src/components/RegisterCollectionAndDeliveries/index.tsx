@@ -1,16 +1,19 @@
 import { Formik } from 'formik';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import * as Yup from 'yup';
+import { getCities, ICity } from '../../firebase/firestore/Cities';
 import { TRegistrationType } from '../../models/types';
 import { formattedCPF, formattedLicensePlate, formattedPhone } from '../../utils/LIB';
 import { ButtonPrimary } from '../ButtonPrimary';
 import { Input } from '../Input';
-import { InputSelectTip } from '../InputSelect';
+import { InputSelectTip, ISelectItems } from '../InputSelect';
+import { InputSelectAutoComplete } from '../InputSelectAutoComplete';
+import { LoaderFullScreen } from '../Loader';
 import { Modal } from '../Modal';
 
 import './styles.scss';
 
-interface IRegisterDeliveryman {
+interface IRegisterCollectionAndDeliveries {
     isVisible: boolean;
     onClose(close: false): void;
     type: TRegistrationType;
@@ -31,13 +34,38 @@ const city = [
     },
 ];
 
-export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible, onClose }) => {
+export const RegisterCollectionAndDeliveries: React.FC<IRegisterCollectionAndDeliveries> = ({ isVisible, onClose }) => {
     const [loading, setLoading] = useState(false);
+    const [cities, setCities] = useState<ISelectItems[]>([]);
+
+    useEffect(() => {
+        if (isVisible) {
+            loadCities();
+        }
+    }, [isVisible]);
+
+    const loadCities = async (): Promise<void> => {
+        setLoading(true);
+
+        const listOfCities = await getCities();
+
+        if (listOfCities) {
+            listOfCities.forEach((item) => {
+                setCities((prevState) => [...prevState, {
+                    label: item.name,
+                    value: item.id,
+                }]);
+            });
+        }
+
+        setLoading(false);
+    };
+
+    console.log(cities);
 
     const validationSchema = Yup.object().shape({
         name: Yup.string()
             .required('Informe o nome do entregador'),
-
     });
 
     const handleSubmitRegister = useCallback(() => {
@@ -48,18 +76,16 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
         <Modal
             isVisible={isVisible}
             onClose={onClose}
-            title="Adicionar Entregador"
+            title="Coletas e Entregas"
             fullScreenMobile
         >
             <Formik
                 validationSchema={validationSchema}
                 initialValues={{
-                    name: '',
-                    cpf: '',
-                    cnh: '',
-                    licensePlate: '',
-                    phone: '',
-                    citiesServed: [],
+                    from: '',
+                    to: '',
+                    deliveryAmount: 0,
+                    collectionAmount: 0,
                 }}
                 onSubmit={({ cnh, cpf, licensePlate, name, phone, citiesServed }) => {
                     console.log({
@@ -76,7 +102,36 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
             >
                 {({ handleChange, handleSubmit, values, errors, setFieldValue }) => (
                     <form className="container-form-register-deliveryman">
-                        <Input
+                        {/* <InputSelectTip
+                            required
+                            label="De"
+                            marginTop={16}
+                            marginBottom={24}
+                            items={cities}
+                            selectedValues={values.from}
+                            setSelectedValues={(values) => setFieldValue('from', values)}
+                            multiple={false}
+                        /> */}
+
+                        <div className="container-form-register-deliveryman__row-2">
+
+                            <InputSelectAutoComplete
+                                items={cities}
+                                label="De"
+                                required
+                                selectedValues={values.from}
+                                setSelectedValues={handleChange('from')}
+                            />
+
+                            <InputSelectAutoComplete
+                                items={cities}
+                                label="De"
+                                required
+                                selectedValues={values.to}
+                                setSelectedValues={handleChange('to')}
+                            />
+                        </div>
+                        {/* <Input
                             disabled={loading}
                             required
                             label="Nome"
@@ -86,9 +141,9 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
                             type="text"
                             marginTop={8}
                             error={errors.name}
-                        />
+                        /> */}
 
-                        <div className="container-form-register-deliveryman__row-2">
+                        {/* <div className="container-form-register-deliveryman__row-2">
                             <Input
                                 disabled={loading}
                                 required
@@ -140,19 +195,17 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
                                 maxLength={15}
                                 error={errors.phone}
                             />
-                        </div>
+                        </div> */}
 
-                        <InputSelectTip
+                        {/* <InputSelectTip
                             required
                             label="Cidades atendidas"
                             marginTop={16}
                             marginBottom={24}
-                            placeholder="Informe as cidade atendidas"
                             items={city}
                             selectedValues={values.citiesServed}
                             setSelectedValues={(values) => setFieldValue('citiesServed', values)}
-                            multiple
-                        />
+                        /> */}
 
                         <ButtonPrimary
                             title="Salvar"
@@ -161,6 +214,8 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
                     </form>
                 )}
             </Formik>
+
+            {/* <LoaderFullScreen isVisible={loading} /> */}
         </Modal>
     );
 };

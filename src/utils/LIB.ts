@@ -29,6 +29,25 @@ export const formattedPhone = (value: string) => {
     } return '';
 };
 
+export const formattedLicensePlate = (value: string) => {
+    if (value) {
+        value = value.replace(/\W/g, '');
+        value = value.replace(/(\w{3})(\w)/, '$1-$2').toUpperCase();
+        value = value.replace(/(\w{3})(\w)/, '$1$2').toUpperCase();
+        return value;
+    } return '';
+};
+
+export const formattedCPF = (value: string) => {
+    if (value) {
+        value = removeMask(value);
+        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+        value = value.replace(/(\d{3})(\d)/, '$1-$2');
+        return value;
+    } return '';
+};
+
 export const removeMask = (value: string) => {
     value = value.replace(/\D/g, '');
     return value;
