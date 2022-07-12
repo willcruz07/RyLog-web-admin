@@ -27,21 +27,17 @@ export const Routes: React.FC = () => {
 
     const checkOnAuthStateUser = useCallback((user: User | null) => {
         if (user && user.email) {
-            if (!state.newUserInProgress.status) {
-                getUserData(user.email)
-                    .then((u) => {
-                        if (u !== undefined) {
-                            if (u?.webAccess) {
-                                dispatch(setUser(u));
-                            } else {
-                                setShowMessageUser(true);
-                                dispatch(clearUser());
-                                signOut(auth);
-                            }
-                        }
-                    })
-                    .finally(() => setLoading(false));
-            }
+            getUserData(user.email)
+                .then((u) => {
+                    if (u?.webAccess) {
+                        dispatch(setUser(u));
+                    } else {
+                        setShowMessageUser(true);
+                        dispatch(clearUser());
+                        signOut(auth);
+                    }
+                })
+                .finally(() => setLoading(false));
         } else {
             dispatch(clearUser());
             setLoading(false);

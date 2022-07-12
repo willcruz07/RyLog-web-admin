@@ -1,6 +1,7 @@
 export enum EUserTypes {
-    setUser,
-    clearUser
+    setUser = '@User/SET',
+    clearUser = '@User/CLEAR',
+    setCurrentPassword = '@User/PASSWORD',
 }
 
 export interface IUserWeb {
@@ -15,14 +16,19 @@ export interface ISetUser {
     type: EUserTypes.setUser;
     payload: IUserWeb;
 }
+export interface ISetCurrentPassword {
+    type: EUserTypes.setCurrentPassword;
+    payload: string;
+}
 
 export interface IClearUser {
     type: EUserTypes.clearUser,
 }
 
-export type TUserActions = ISetUser | IClearUser;
+export type TUserActions = ISetUser | IClearUser | ISetCurrentPassword;
 
 export interface IUserState {
     data: IUserWeb;
     logged: boolean;
+    currentPassword: string;
 }

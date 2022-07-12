@@ -10,7 +10,7 @@ export interface IDeliveryman {
     name: string;
     cpf: string;
     cnh: string;
-    email: string;
+    // email: string;
     licensePlate: string;
     phone: string;
     citiesServed: ICitiesServed[];
@@ -20,15 +20,15 @@ export interface IGetDeliveryman extends IDeliveryman {
     id: string;
 }
 
-export const setDeliveryman = async (data: IDeliveryman, id: string): Promise<void> => {
+export const setDeliveryman = async (data: IDeliveryman): Promise<void> => {
     try {
-        const docRef = doc(dbFirestore, 'entregadores', id);
+        const docRef = doc(collection(dbFirestore, 'entregadores'));
         await setDoc(docRef, {
             cpf: data.cpf,
             cnh: data.cnh,
             celular: data.phone,
             nome: data.name,
-            email: data.email,
+            // email: data.email,
             emplacamento: data.licensePlate,
             cidadesAtendidas: data.citiesServed.map((item) => ({
                 nome: item.citiesName,
@@ -56,7 +56,7 @@ export const getDeliveryman = async (): Promise<IGetDeliveryman[] | undefined> =
             phone: doc.data().celular,
             cnh: doc.data().cnh,
             cpf: doc.data().cpf,
-            email: doc.data().email,
+            // email: doc.data().email,
             licensePlate: doc.data().emplacamento,
             citiesServed: doc.data().cidadesAtendidas.map((item: any) => ({
                 collectionAndDeliveryId: item.idCidade,
