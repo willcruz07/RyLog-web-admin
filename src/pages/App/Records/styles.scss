@@ -5,12 +5,17 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax($d--8, $d--300));
     gap: $d--16;
+
+    @media(max-width: 700px) {
+        grid-template-columns: 100%;
+    }
 }
 
 .container-registration {
     display: flex;
     flex-direction: column;
     height: 100%;
+    flex: 1;
 
     &__header {
         display: flex;    
@@ -18,9 +23,18 @@
         justify-content: space-between;
     
         margin-bottom: $d--24;
+
+        @media(max-width: 700px) {        
+            flex-direction: column;      
+            align-items: flex-start;
+        }
     
         &__title {
             display: flex;
+
+            @media(max-width: 700px) {
+                margin-bottom: $d--16;
+            }
         }
     }
 

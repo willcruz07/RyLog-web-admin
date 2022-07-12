@@ -12,12 +12,13 @@ import { TRegistrationType } from '../../../../models/types';
 import { dbFirestore } from '../../../../firebase/config';
 import { formattedCPF, formattedPhone } from '../../../../utils/LIB';
 import { IGetDeliveryman } from '../../../../firebase/firestore/Deliveryman';
+import { useWindowSize } from '../../../../hooks/useWindowSize';
 
 const columns: GridColDef[] = [
-    { field: 'name', headerName: 'Nome', flex: 1 },
-    { field: 'cpf', headerName: 'CPF', flex: 1 },
-    { field: 'cnh', headerName: 'CNH', flex: 1 },
-    { field: 'phone', headerName: 'Celular', flex: 1 },
+    { field: 'name', headerName: 'Nome', flex: 1, minWidth: 150 },
+    { field: 'cpf', headerName: 'CPF', flex: 1, minWidth: 100 },
+    { field: 'cnh', headerName: 'CNH', flex: 1, minWidth: 100 },
+    { field: 'phone', headerName: 'Celular', flex: 1, minWidth: 120 },
 ];
 
 export const RegistrationOfDeliveryman: React.FC = () => {
@@ -25,6 +26,8 @@ export const RegistrationOfDeliveryman: React.FC = () => {
     const [typeRegister, setTypeRegister] = useState<TRegistrationType>('CREATE');
 
     const [deliveryman, setDeliveryman] = useState<GridRowsProp<IGetDeliveryman>>([]);
+
+    const { width } = useWindowSize();
 
     useEffect(() => {
         const queryCollection = query(collection(dbFirestore, 'entregadores'));
@@ -39,6 +42,7 @@ export const RegistrationOfDeliveryman: React.FC = () => {
                             cnh: doc.cnh,
                             cpf: formattedCPF(doc.cpf),
                             name: doc.nome,
+                            email: doc.email,
                             phone: formattedPhone(doc.celular),
                             licensePlate: doc.emplacamento,
                             citiesServed: doc.cidadesAtendidas.map((item: any) => ({
@@ -59,6 +63,7 @@ export const RegistrationOfDeliveryman: React.FC = () => {
                             cnh: doc.cnh,
                             cpf: formattedCPF(doc.cpf),
                             name: doc.nome,
+                            email: doc.email,
                             phone: formattedPhone(doc.celular),
                             licensePlate: doc.emplacamento,
                             citiesServed: doc.cidadesAtendidas.map((item: any) => ({
@@ -98,7 +103,7 @@ export const RegistrationOfDeliveryman: React.FC = () => {
 
                         <ButtonPrimary
                             title="Adicionar"
-                            width={152}
+                            width={width && width > 700 ? 152 : undefined}
                             onClick={handleNewRegister}
                         />
                     </div>

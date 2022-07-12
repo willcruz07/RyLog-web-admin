@@ -3,11 +3,16 @@ import React, { useCallback, useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import { getCollectAndDeliveries, IGetCollectDeliveries } from '../../firebase/firestore/CollectAndDeliveries';
 import { ICitiesServed, setDeliveryman } from '../../firebase/firestore/Deliveryman';
+import { addUserDeliveryman, getUserData } from '../../firebase/firestore/User';
+import { useAppContext } from '../../hooks/AppContext';
 import { TRegistrationType } from '../../models/types';
+import { startNewUserInProgress, stopNewUserInProgress } from '../../store/newUserInProgress/actions';
+import { setUser } from '../../store/user/actions';
 import { formattedCPF, formattedLicensePlate, formattedPhone, removeMask } from '../../utils/LIB';
 import { ButtonPrimary } from '../ButtonPrimary';
 import { Input } from '../Input';
 import { InputSelectTip, ISelectItems } from '../InputSelect';
+import { LoaderFullScreen } from '../Loader';
 import { Message } from '../Message';
 import { Modal } from '../Modal';
 
@@ -23,12 +28,15 @@ interface IDataRegister {
     name: string;
     cpf: string;
     cnh: string;
+    email: string;
     licensePlate: string;
     phone: string;
     citiesServed: string[];
 }
 
 export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible, onClose }) => {
+    const { dispatch } = useAppContext();
+
     const [loading, setLoading] = useState(false);
     const [citiesServed, setCitiesServed] = useState<IGetCollectDeliveries[]>([]);
     const [listOfCities, setListOfCities] = useState<ISelectItems[]>([]);
@@ -59,6 +67,9 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
     const validationSchema = Yup.object().shape({
         name: Yup.string()
             .required('Informe o nome do entregador'),
+        email: Yup.string()
+            .required('Informe o email')
+            .email('Email inválido'),
         cpf: Yup.string()
             .required('Informe o cpf do entregador'),
         cnh: Yup.string()
@@ -69,6 +80,7 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
 
     const handleSubmitRegister = useCallback(async (data: IDataRegister) => {
         setLoading(true);
+        dispatch(startNewUserInProgress());
 
         const listCitiesServed: ICitiesServed[] = [];
 
@@ -81,22 +93,41 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
             }
         });
 
-        setDeliveryman({
-            phone: data.phone,
-            name: data.name,
-            cnh: data.cnh,
-            cpf: data.cpf,
-            licensePlate: data.licensePlate,
-            citiesServed: listCitiesServed,
-        })
-            .catch((error) => {
-                setMessage(error);
-                setMessageIsVisible(true);
-            })
-            .then(() => {
-                onClose(false);
-            })
-            .finally(() => setLoading(false));
+        addUserDeliveryman({
+            adminPassword: '123456',
+            userEmail: data.email,
+            userPassword: data.cpf.substring(0, 6),
+        }).then((users) => {
+            if (users) {
+                getUserData(users.adminCredential.user.email || '')
+                    .then((user) => {
+                        if (user) {
+                            dispatch(setUser(user));
+                        }
+                    });
+
+                setDeliveryman({
+                    phone: data.phone,
+                    name: data.name,
+                    cnh: data.cnh,
+                    cpf: data.cpf,
+                    email: data.email,
+                    licensePlate: data.licensePlate,
+                    citiesServed: listCitiesServed,
+                }, users.newUserCredential.user.uid)
+                    .catch((error) => {
+                        setMessage(error);
+                        setMessageIsVisible(true);
+                    })
+                    .then(() => {
+                        onClose(false);
+                    })
+                    .finally(() => {
+                        setLoading(false);
+                        dispatch(stopNewUserInProgress());
+                    });
+            }
+        }).catch(() => setLoading(false));
     }, [citiesServed]);
 
     return (
@@ -114,14 +145,16 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
                     cnh: '',
                     licensePlate: '',
                     phone: '',
+                    email: '',
                     citiesServed: [],
                 }}
-                onSubmit={({ cnh, cpf, licensePlate, name, phone, citiesServed }) => {
+                onSubmit={({ cnh, cpf, licensePlate, name, phone, citiesServed, email }) => {
                     handleSubmitRegister({
                         cnh,
                         cpf: removeMask(cpf),
                         licensePlate,
                         name,
+                        email,
                         phone: removeMask(phone),
                         citiesServed,
                     });
@@ -139,6 +172,18 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
                             type="text"
                             marginTop={8}
                             error={errors.name}
+                        />
+
+                        <Input
+                            disabled={loading}
+                            required
+                            label="E-mail"
+                            onChange={handleChange('email')}
+                            value={values.email}
+                            placeholder="Informe o email do entregador"
+                            type="text"
+                            marginTop={8}
+                            error={errors.email}
                         />
 
                         <div className="container-form-register-deliveryman__row-2">
@@ -220,6 +265,11 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
                 onClose={setMessageIsVisible}
                 type="DANGER"
                 message={message}
+            />
+
+            <LoaderFullScreen
+                isVisible={loading}
+                title="Cadastrando entregador"
             />
         </Modal>
     );

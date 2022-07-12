@@ -6,13 +6,14 @@
     display: grid;
     grid-template-columns: min-content auto;
     grid-template-rows: $d--80 auto;
+    height: 100vh;
 
     grid-template-areas: 
     'NAV HEADER'
     'NAV CONTENT';    
 
     @media(max-width: 700px) {        
-        grid-template-columns: 100%;
+        grid-template-columns: 100%;        
         grid-template-areas: 
         'HEADER'
         'CONTENT';
@@ -30,7 +31,7 @@
 
     overflow: auto; 
     
-    @media(max-width: 700px) {        
-        padding: 0;
-    }
+    // @media(max-width: 700px) {        
+    //     padding: 0;
+    // }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { BrowserRouter } from 'react-router-dom';
 import { LoaderFullScreen } from '../components/Loader';
@@ -25,24 +25,28 @@ export const Routes: React.FC = () => {
         }
     }, []);
 
-    const checkOnAuthStateUser = (user: User | null) => {
+    const checkOnAuthStateUser = useCallback((user: User | null) => {
         if (user && user.email) {
-            getUserData(user.email)
-                .then((u) => {
-                    if (u?.webAccess) {
-                        dispatch(setUser(u));
-                    } else {
-                        setShowMessageUser(true);
-                        dispatch(clearUser());
-                        signOut(auth);
-                    }
-                })
-                .finally(() => setLoading(false));
+            if (!state.newUserInProgress.status) {
+                getUserData(user.email)
+                    .then((u) => {
+                        if (u !== undefined) {
+                            if (u?.webAccess) {
+                                dispatch(setUser(u));
+                            } else {
+                                setShowMessageUser(true);
+                                dispatch(clearUser());
+                                signOut(auth);
+                            }
+                        }
+                    })
+                    .finally(() => setLoading(false));
+            }
         } else {
             dispatch(clearUser());
             setLoading(false);
         }
-    };
+    }, [state.newUserInProgress.status]);
 
     useEffect(() => {
         const subscribe = onAuthStateChanged(auth, checkOnAuthStateUser);
