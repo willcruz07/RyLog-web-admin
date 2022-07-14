@@ -15,7 +15,7 @@ export interface IGetCollectDeliveries extends ICollectDeliveries {
 
 export const setCollectAndDeliveries = async (data: ICollectDeliveries): Promise<void> => {
     try {
-        const docRef = doc(collection(dbFirestore, 'coletas_entregas'));
+        const docRef = doc(collection(dbFirestore, 'valores_de_coletas_entregas'));
         await setDoc(docRef, {
             valorDaColeta: data.collectionAmount,
             valorDaEntrega: data.deliveryAmount,
@@ -38,7 +38,7 @@ export const setCollectAndDeliveries = async (data: ICollectDeliveries): Promise
 };
 
 export const getCollectAndDeliveries = async (): Promise<IGetCollectDeliveries[] | undefined> => {
-    const docRef = collection(dbFirestore, 'coletas_entregas');
+    const docRef = collection(dbFirestore, 'valores_de_coletas_entregas');
     const citiesDoc = await getDocs(docRef);
 
     if (citiesDoc.empty) {

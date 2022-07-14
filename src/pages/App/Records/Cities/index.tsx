@@ -34,7 +34,7 @@ export const RegistrationOfCities: React.FC = () => {
     const [collectionsAndDeliveries, setCollectionsAndDeliveries] = useState<GridRowsProp<ICity>>([]);
 
     useEffect(() => {
-        const queryCollection = query(collection(dbFirestore, 'coletas_entregas'));
+        const queryCollection = query(collection(dbFirestore, 'valores_de_coletas_entregas'));
         const dataList = onSnapshot(queryCollection, (snapShot) => {
             snapShot.docChanges().forEach((change) => {
                 const doc = Object.assign(change.doc.data(), { id: change.doc.id });
