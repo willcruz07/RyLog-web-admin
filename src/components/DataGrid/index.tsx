@@ -16,6 +16,7 @@ interface IDataGridProps {
     columns: GridColDef[];
     onEdit?: (item: any) => void;
     onDelete?: (item: any) => void;
+    checkboxSelection?: boolean;
 }
 
 const CustomPagination = () => {

@@ -27,7 +27,7 @@ const columns: GridColDef[] = [
     { field: 'deliveryValue', headerName: 'Valor da Entrega', flex: 1 },
 ];
 
-export const RegistrationOfCities: React.FC = () => {
+export const RegistrationOfDelivery: React.FC = () => {
     const [registerIsVisible, setRegisterIsVisible] = useState(false);
     const [typeRegister, setTypeRegister] = useState<TRegistrationType>('CREATE');
 
@@ -88,7 +88,7 @@ export const RegistrationOfCities: React.FC = () => {
                             />
 
                             <Typography
-                                text="Cadastro de rotas"
+                                text="Direcionar coletas e entregas"
                                 type="Title"
                             />
                         </div>

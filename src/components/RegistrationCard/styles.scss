@@ -25,7 +25,7 @@
                 transition: 0.2s ease-in-out;
             }            
         }    
-        .container-text {
+        .container-text {            
             h2 {
                 color: $color-secondary-600;
                 transition: 0.2s ease-in-out;
@@ -56,7 +56,8 @@
         h2 {
             font-family: $font-primary;
             color: $font-primary-color;
-            font-size: $d--22;            
+            font-size: $d--22;              
+            margin-bottom: $d--4;        
         }
 
         span {
