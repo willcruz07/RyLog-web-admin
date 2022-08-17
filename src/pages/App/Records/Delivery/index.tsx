@@ -9,21 +9,14 @@ import { Input } from '../../../../components/Input';
 import { RegisterCollectionAndDeliveries } from '../../../../components/RegisterCollectionAndDeliveries';
 import { Typography } from '../../../../components/Typography';
 import { dbFirestore } from '../../../../firebase/config';
+import { accountId } from '../../../../firebase/firestore/Account';
+import { IPerson } from '../../../../models/Person';
 import { TRegistrationType } from '../../../../models/types';
-import { formattedCurrency } from '../../../../utils/LIB';
-
-interface ICity {
-    id: string;
-    from: string;
-    to: string;
-    collectionValue: string;
-    deliveryValue: string;
-}
 
 const columns: GridColDef[] = [
-    { field: 'from', headerName: 'De', flex: 1 },
-    { field: 'to', headerName: 'Para', flex: 1 },
-    { field: 'collectionValue', headerName: 'Valor da Coleta', flex: 1 },
+    { field: 'collectStatus', headerName: 'Coleta', flex: 1 },
+    { field: 'deliveryStatus', headerName: 'Entrega', flex: 1 },
+    { field: 'deliveryman', headerName: 'Entregador', flex: 1 },
     { field: 'deliveryValue', headerName: 'Valor da Entrega', flex: 1 },
 ];
 
@@ -31,10 +24,11 @@ export const RegistrationOfDelivery: React.FC = () => {
     const [registerIsVisible, setRegisterIsVisible] = useState(false);
     const [typeRegister, setTypeRegister] = useState<TRegistrationType>('CREATE');
 
-    const [collectionsAndDeliveries, setCollectionsAndDeliveries] = useState<GridRowsProp<ICity>>([]);
+    const [collectionsAndDeliveries, setCollectionsAndDeliveries] = useState<GridRowsProp<IPerson>>([]);
 
     useEffect(() => {
-        const queryCollection = query(collection(dbFirestore, 'valores_de_coletas_entregas'));
+        const queryCollection = query(collection(dbFirestore, 'contas', accountId, 'coletas_entregas'));
+
         const dataList = onSnapshot(queryCollection, (snapShot) => {
             snapShot.docChanges().forEach((change) => {
                 const doc = Object.assign(change.doc.data(), { id: change.doc.id });
@@ -43,11 +37,27 @@ export const RegistrationOfDelivery: React.FC = () => {
                     case 'added':
                         setCollectionsAndDeliveries((prevState) => [...prevState, {
                             id: doc.id,
-                            collectionValue: formattedCurrency(doc.valorDaColeta),
-                            deliveryValue: formattedCurrency(doc.valorDaEntrega),
-                            from: doc.origem.nome,
-                            to: doc.destino.nome,
-                        } as ICity]);
+                            name: doc.nome,
+                            phone: doc.celular,
+                            cpf: doc?.cpf || '',
+                            rg: doc?.rg || '',
+                            userRef: doc?.usario_ref || '',
+                            address: {
+                                zipCode: doc?.endereco?.cep || '',
+                                district: doc?.endereco?.bairro || '',
+                                complement: doc?.endereco?.complemento || '',
+                                street: doc?.endereco?.logradouro || '',
+                                country: doc?.endereco?.pais || '',
+                                ref: doc?.endereco?.ref || '',
+                                reference: doc?.endereco?.referencia || '',
+                                number: doc?.endereco?.numero || '',
+                                state: doc?.endereco?.uf || '',
+                                city: {
+                                    name: doc?.endereco?.cidade?.nome || '',
+                                    ref: doc?.endereco?.cidade?.ref || '',
+                                },
+                            },
+                        } as IPerson]);
                         break;
 
                     case 'removed':
@@ -58,11 +68,27 @@ export const RegistrationOfDelivery: React.FC = () => {
                         setCollectionsAndDeliveries((prevState) => prevState.filter((data) => data.id !== doc.id));
                         setCollectionsAndDeliveries((prevState) => [...prevState, {
                             id: doc.id,
-                            collectionValue: formattedCurrency(doc.valorDaColeta),
-                            deliveryValue: formattedCurrency(doc.valorDaEntrega),
-                            from: doc.origem.nome,
-                            to: doc.destino.nome,
-                        } as ICity]);
+                            name: doc.nome,
+                            phone: doc.celular,
+                            cpf: doc?.cpf || '',
+                            rg: doc?.rg || '',
+                            userRef: doc?.usario_ref || '',
+                            address: {
+                                zipCode: doc?.endereco?.cep || '',
+                                district: doc?.endereco?.bairro || '',
+                                complement: doc?.endereco?.complemento || '',
+                                street: doc?.endereco?.logradouro || '',
+                                country: doc?.endereco?.pais || '',
+                                ref: doc?.endereco?.ref || '',
+                                reference: doc?.endereco?.referencia || '',
+                                number: doc?.endereco?.numero || '',
+                                state: doc?.endereco?.uf || '',
+                                city: {
+                                    name: doc?.endereco?.cidade?.nome || '',
+                                    ref: doc?.endereco?.cidade?.ref || '',
+                                },
+                            },
+                        } as IPerson]);
                         break;
                     }
                 }
@@ -113,6 +139,7 @@ export const RegistrationOfDelivery: React.FC = () => {
                     <Grid
                         rows={collectionsAndDeliveries}
                         columns={columns}
+                        checkboxSelection
                         onDelete={(item) => console.log(item, 'delete')}
                         onEdit={(item) => console.log(item, 'edit')}
                     />

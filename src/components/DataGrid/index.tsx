@@ -97,7 +97,7 @@ function CustomNoRowsOverlay() {
     );
 }
 
-export const Grid: React.FC<IDataGridProps> = ({ columns, rows, onDelete, onEdit }) => {
+export const Grid: React.FC<IDataGridProps> = ({ columns, rows, checkboxSelection, onDelete, onEdit }) => {
     const [listColumns, setListColumns] = useState<GridColDef[]>(columns);
 
     useEffect(() => {
@@ -155,6 +155,7 @@ export const Grid: React.FC<IDataGridProps> = ({ columns, rows, onDelete, onEdit
                 disableColumnMenu
                 autoPageSize
                 disableSelectionOnClick
+                checkboxSelection={checkboxSelection}
                 rows={rows}
                 columns={listColumns}
                 components={{

@@ -1,4 +1,5 @@
 import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
+import { TCollectStatus, TDeliveryStatus, TPeriod } from '../../models/types';
 import { dbFirestore } from '../config';
 import { ICity } from './Cities';
 
@@ -7,6 +8,17 @@ export interface ICollectDeliveries {
     to: ICity;
     deliveryAmount: number;
     collectionAmount: number;
+}
+
+export interface ICollectionsAndDeliveries {
+    uid: string;
+    data: Date;
+    printedLabels: boolean;
+    pathSignature: string;
+    period: TPeriod;
+    collectStatus: TCollectStatus;
+    deliveryStatus: TDeliveryStatus;
+
 }
 
 export interface IGetCollectDeliveries extends ICollectDeliveries {
