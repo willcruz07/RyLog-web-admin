@@ -12,38 +12,38 @@ import { ICollectionsAndDeliveries } from '../../../../models/CollectionsAndDeli
 import { TRegistrationType } from '../../../../models/types';
 
 const columns: GridColDef[] = [
-    { field: 'deliveryStatus', headerName: 'Status da coleta', width: 170 },
+    { field: 'collectStatus', headerName: 'Status da coleta', width: 170 },
     { field: 'period', headerName: 'Período', width: 130 },
     {
-        field: 'receiverCity',
+        field: 'senderCity',
         headerName: 'Cidade',
         flex: 1,
         minWidth: 150,
         renderCell: (params) => (
-            <div>{params.row?.receiver?.address?.city?.name}</div>
+            <div>{params.row?.sender?.address?.city?.name}</div>
         ),
     },
     {
-        field: 'receiverDistrict',
+        field: 'senderDistrict',
         headerName: 'Bairro',
-        flex: 1,
         minWidth: 150,
+        flex: 1,
         renderCell: (params) => (
-            <div>{params.row?.receiver?.address?.district}</div>
+            <div>{params.row?.sender?.address?.district}</div>
         ),
     },
     {
         field: 'deliveryman',
         headerName: 'Entregador',
-        flex: 2,
         minWidth: 200,
+        flex: 2,
         renderCell: (params) => (
             <div>{params.row?.deliverymanCollect?.name}</div>
         ),
     },
 ];
 
-export const RegistrationOfDelivery: React.FC = () => {
+export const RegistrationOfCollect: React.FC = () => {
     const [registerIsVisible, setRegisterIsVisible] = useState(false);
     const [typeRegister, setTypeRegister] = useState<TRegistrationType>('CREATE');
     const [loading, setLoading] = useState(true);
@@ -55,7 +55,7 @@ export const RegistrationOfDelivery: React.FC = () => {
     const [fullCollectionsAndDeliveries, setFullCollectionsAndDeliveries] = useState<GridRowsProp<ICollectionsAndDeliveries>>([]);
 
     useEffect(() => {
-        getCollectionsAndDeliveries('DELIVERY')
+        getCollectionsAndDeliveries('COLLECT')
             .then((data) => {
                 setCollectionsAndDeliveries(data);
                 setFullCollectionsAndDeliveries(data);
@@ -72,8 +72,8 @@ export const RegistrationOfDelivery: React.FC = () => {
         const list = fullCollectionsAndDeliveries.filter((item) => (
             item.collectStatus.toLocaleLowerCase().includes(text.toLowerCase()) ||
             item.period.toLocaleLowerCase().includes(text.toLowerCase()) ||
-            item.receiver.address.district.toLowerCase().includes(text.toLowerCase()) ||
-            item.receiver.address.city.name.toLowerCase().includes(text.toLowerCase()) ||
+            item.sender.address.district.toLowerCase().includes(text.toLowerCase()) ||
+            item.sender.address.city.name.toLowerCase().includes(text.toLowerCase()) ||
             item.deliverymanCollect?.name.toLocaleLowerCase().includes(text.toLowerCase())
         ));
 
@@ -94,7 +94,7 @@ export const RegistrationOfDelivery: React.FC = () => {
                             />
 
                             <Typography
-                                text="Direcionar entregas"
+                                text="Direcionar coletas"
                                 type="Title"
                             />
                         </div>

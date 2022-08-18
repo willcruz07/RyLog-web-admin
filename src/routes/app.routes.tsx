@@ -7,6 +7,7 @@ import { Movement } from '../pages/App/Movement';
 import { Partners } from '../pages/App/Partners';
 import { Records } from '../pages/App/Records';
 import { RegistrationOfCities } from '../pages/App/Records/Cities';
+import { RegistrationOfCollect } from '../pages/App/Records/Collect';
 import { RegistrationOfDelivery } from '../pages/App/Records/Delivery';
 import { RegistrationOfDeliveryman } from '../pages/App/Records/Deliveryman';
 import { Settings } from '../pages/App/Settings';
@@ -22,6 +23,7 @@ export const App: React.FC = () => (
                 <Route path="deliveryman" element={<RegistrationOfDeliveryman />} />
                 <Route path="cities" element={<RegistrationOfCities />} />
                 <Route path="delivery" element={<RegistrationOfDelivery />} />
+                <Route path="collect" element={<RegistrationOfCollect />} />
             </Route>
             <Route path="partners" element={<Partners />} />
             <Route path="settings" element={<Settings />} />

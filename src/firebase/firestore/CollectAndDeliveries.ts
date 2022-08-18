@@ -1,9 +1,11 @@
-import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import { IAmountCollectDeliveries, IGetCollectDeliveries } from '../../models/AmountCollectionAndDeliveries';
 import { ICollectionsAndDeliveries } from '../../models/CollectionsAndDeliveries';
 import { getDateFirebase } from '../../utils/LIB';
 import { dbFirestore } from '../config';
 import { accountId } from './Account';
+
+type TCollectionsAndDeliveries = 'COLLECT' | 'DELIVERY';
 
 export const addCollectAndDeliveriesAmount = async (data: IAmountCollectDeliveries): Promise<void> => {
     try {
@@ -64,13 +66,15 @@ export const getCollectAndDeliveriesAmount = async (): Promise<IGetCollectDelive
     return listCities;
 };
 
-export const getCollectionsAndDeliveries = async (): Promise<ICollectionsAndDeliveries[] | undefined> => {
-    const docRef = collection(dbFirestore, 'contas', accountId, 'coletas_entregas');
-    const docs = await getDocs(docRef);
+export const getCollectionsAndDeliveries = async (params: TCollectionsAndDeliveries): Promise<ICollectionsAndDeliveries[]> => {
+    const queryValues = params === 'COLLECT' ?
+        ['PENDENTE', 'CANCELADA', 'COLETADA'] : ['CONFIRMADA'];
 
-    if (docs.empty) {
-        return undefined;
-    }
+    const docRef = query(
+        collection(dbFirestore, 'contas', accountId, 'coletas_entregas'),
+        where('status_coleta', 'in', queryValues),
+    );
+    const docs = await getDocs(docRef);
 
     const listCollectionsAndDeliveries: ICollectionsAndDeliveries[] = [];
 

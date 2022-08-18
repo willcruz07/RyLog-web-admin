@@ -1,9 +1,9 @@
 import React from 'react';
-import { FaPeopleCarry, FaCity, FaTruck } from 'react-icons/fa';
+import { FaPeopleCarry, FaMapMarkedAlt, FaTruck, FaRegIdCard } from 'react-icons/fa';
 
 import './styles.scss';
 
-type TIconType = 'deliveryman' | 'cities' | 'delivery';
+type TIconType = 'deliveryman' | 'map' | 'delivery' | 'collect';
 
 interface IRegistrationCardProps {
     title: string;
@@ -15,10 +15,13 @@ interface IRegistrationCardProps {
 const getIcon = (type: TIconType) => {
     switch (type) {
         case 'deliveryman':
-            return <FaPeopleCarry />;
+            return <FaRegIdCard />;
 
-        case 'cities':
-            return <FaCity />;
+        case 'map':
+            return <FaMapMarkedAlt />;
+
+        case 'collect':
+            return <FaPeopleCarry />;
 
         case 'delivery':
             return <FaTruck />;

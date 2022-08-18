@@ -1,9 +1,10 @@
+/* eslint-disable no-unused-expressions */
 /* eslint-disable jsx-a11y/mouse-events-have-key-events */
 /* eslint-disable no-console */
 import React, { useEffect, useState } from 'react';
-import { DataGrid, GridCellParams, GridRowsProp, GridColDef, useGridApiContext, useGridSelector, gridPageSelector, gridPageCountSelector } from '@mui/x-data-grid';
+import { DataGrid, GridCellParams, GridRowsProp, GridColDef, useGridApiContext, useGridSelector, gridPageSelector, gridPageCountSelector, GridSelectionModel, GridRowParams } from '@mui/x-data-grid';
 import Pagination from '@mui/material/Pagination';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaFileAlt } from 'react-icons/fa';
 import Tooltip from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -17,6 +18,10 @@ interface IDataGridProps {
     loading?: boolean;
     onEdit?: (item: any) => void;
     onDelete?: (item: any) => void;
+    onViewing?: (item: any) => void;
+    onSetSelectionModel?: React.Dispatch<GridSelectionModel>;
+    selectionModel?: GridSelectionModel;
+    isRowSelectable?: ((params: GridRowParams<any>) => boolean) | undefined;
     checkboxSelection?: boolean;
 }
 
@@ -98,11 +103,22 @@ function CustomNoRowsOverlay() {
     );
 }
 
-export const Grid: React.FC<IDataGridProps> = ({ columns, rows, checkboxSelection, loading, onDelete, onEdit }) => {
+export const Grid: React.FC<IDataGridProps> = ({
+    columns,
+    rows,
+    checkboxSelection,
+    loading,
+    selectionModel,
+    isRowSelectable,
+    onDelete,
+    onEdit,
+    onViewing,
+    onSetSelectionModel,
+}) => {
     const [listColumns, setListColumns] = useState<GridColDef[]>(columns);
 
     useEffect(() => {
-        if (!!onEdit || !!onDelete) {
+        if (!!onEdit || !!onDelete || !!onViewing) {
             setListColumns((list) => [...list, {
                 field: 'action',
                 headerName: 'Ação',
@@ -111,6 +127,22 @@ export const Grid: React.FC<IDataGridProps> = ({ columns, rows, checkboxSelectio
                 sortable: false,
                 renderCell: (params: GridCellParams) => (
                     <div className="container-data-grid__action">
+
+                        {!!onViewing && (
+                            <Tooltip title="Visualizar">
+                                <button
+                                    data-tip="Visualizar"
+                                    type="button"
+                                    onClick={() => onViewing(params.row)}
+                                >
+                                    <FaFileAlt
+                                        data-tip="Visualizar"
+                                        className="icon-viewing"
+                                    />
+                                </button>
+                            </Tooltip>
+                        )}
+
                         {!!onEdit && (
                             <Tooltip title="Editar">
                                 <button
@@ -157,7 +189,12 @@ export const Grid: React.FC<IDataGridProps> = ({ columns, rows, checkboxSelectio
                 loading={loading}
                 autoPageSize
                 disableSelectionOnClick
+                onSelectionModelChange={(newSelection) => {
+                    onSetSelectionModel && onSetSelectionModel(newSelection);
+                }}
+                selectionModel={selectionModel}
                 checkboxSelection={checkboxSelection}
+                isRowSelectable={isRowSelectable}
                 rows={rows}
                 columns={listColumns}
                 components={{
