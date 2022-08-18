@@ -1,31 +1,11 @@
 import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
-import { TCollectStatus, TDeliveryStatus, TPeriod } from '../../models/types';
+import { IAmountCollectDeliveries, IGetCollectDeliveries } from '../../models/AmountCollectionAndDeliveries';
+import { ICollectionsAndDeliveries } from '../../models/CollectionsAndDeliveries';
+import { getDateFirebase } from '../../utils/LIB';
 import { dbFirestore } from '../config';
-import { ICity } from './Cities';
+import { accountId } from './Account';
 
-export interface ICollectDeliveries {
-    from: ICity;
-    to: ICity;
-    deliveryAmount: number;
-    collectionAmount: number;
-}
-
-export interface ICollectionsAndDeliveries {
-    uid: string;
-    data: Date;
-    printedLabels: boolean;
-    pathSignature: string;
-    period: TPeriod;
-    collectStatus: TCollectStatus;
-    deliveryStatus: TDeliveryStatus;
-
-}
-
-export interface IGetCollectDeliveries extends ICollectDeliveries {
-    id: string;
-}
-
-export const setCollectAndDeliveries = async (data: ICollectDeliveries): Promise<void> => {
+export const addCollectAndDeliveriesAmount = async (data: IAmountCollectDeliveries): Promise<void> => {
     try {
         const docRef = doc(collection(dbFirestore, 'valores_de_coletas_entregas'));
         await setDoc(docRef, {
@@ -49,7 +29,7 @@ export const setCollectAndDeliveries = async (data: ICollectDeliveries): Promise
     }
 };
 
-export const getCollectAndDeliveries = async (): Promise<IGetCollectDeliveries[] | undefined> => {
+export const getCollectAndDeliveriesAmount = async (): Promise<IGetCollectDeliveries[] | undefined> => {
     const docRef = collection(dbFirestore, 'valores_de_coletas_entregas');
     const citiesDoc = await getDocs(docRef);
 
@@ -82,4 +62,71 @@ export const getCollectAndDeliveries = async (): Promise<IGetCollectDeliveries[]
     });
 
     return listCities;
+};
+
+export const getCollectionsAndDeliveries = async (): Promise<ICollectionsAndDeliveries[] | undefined> => {
+    const docRef = collection(dbFirestore, 'contas', accountId, 'coletas_entregas');
+    const docs = await getDocs(docRef);
+
+    if (docs.empty) {
+        return undefined;
+    }
+
+    const listCollectionsAndDeliveries: ICollectionsAndDeliveries[] = [];
+
+    docs.forEach((doc) => {
+        listCollectionsAndDeliveries.push({
+            id: doc.data()?.uid || '',
+            data: getDateFirebase(doc.data()?.data),
+            collectStatus: doc.data()?.status_coleta || 'PENDENTE',
+            deliveryStatus: doc.data()?.status_entrega || 'PENDENTE',
+            period: doc.data()?.periodo || 'MANHÃ',
+            printedLabel: doc.data()?.etiquetas_impressas || '',
+            pathSignature: doc.data()?.path_assinatura || '',
+            receiver: {
+                name: doc.data().remetente?.nome || '',
+                cpf: doc.data().remetente?.cpf || '',
+                phone: doc.data().remetente?.celular || '',
+                rg: doc.data().remetente?.rg || '',
+                userRef: doc.data()?.remetente?.usuario_ref || '',
+                address: {
+                    zipCode: doc.data()?.remetente?.endereco?.cep || '',
+                    complement: doc.data()?.remetente?.endereco?.complemento || '',
+                    country: doc.data()?.remetente?.endereco?.pais || '',
+                    district: doc.data()?.remetente?.endereco?.bairro || '',
+                    number: doc.data()?.remetente?.endereco?.numero || '',
+                    state: doc.data()?.remetente?.endereco.uf || '',
+                    street: doc.data()?.remetente?.endereco?.logradouro || '',
+                    ref: doc.data()?.remetente?.endereco?.ref || '',
+                    reference: doc.data()?.remetente?.endereco?.referencia || '',
+                    city: {
+                        name: doc.data()?.remetente?.endereco?.cidade?.nome || '',
+                        ref: doc.data()?.remetente?.endereco?.cidade?.ref || '',
+                    },
+                },
+            },
+            sender: {
+                name: doc.data()?.destinatario?.nome || '',
+                phone: doc.data()?.destinatario?.celular || '',
+                address: {
+                    zipCode: doc.data()?.destinatario?.endereco?.cep || '',
+                    complement: doc.data()?.destinatario?.endereco?.complemento || '',
+                    country: doc.data()?.destinatario?.endereco?.pais || '',
+                    district: doc.data()?.destinatario?.endereco?.bairro || '',
+                    number: doc.data()?.destinatario?.endereco?.numero || '',
+                    state: doc.data()?.destinatario?.endereco.uf || '',
+                    street: doc.data()?.destinatario?.endereco?.logradouro || '',
+                    ref: doc.data()?.destinatario?.endereco?.ref || '',
+                    reference: doc.data()?.destinatario?.endereco?.referencia || '',
+                    city: {
+                        name: doc.data()?.destinatario?.endereco?.cidade?.nome || '',
+                        ref: doc.data()?.destinatario?.endereco?.cidade?.ref || '',
+                    },
+                },
+            },
+
+        });
+    });
+
+    return listCollectionsAndDeliveries;
 };

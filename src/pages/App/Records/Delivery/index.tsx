@@ -1,5 +1,4 @@
 import { GridColDef, GridRowsProp } from '@mui/x-data-grid';
-import { collection, onSnapshot, query } from 'firebase/firestore';
 import React, { useCallback, useEffect, useState } from 'react';
 import { ButtonBack } from '../../../../components/ButtonBack';
 import { ButtonPrimary } from '../../../../components/ButtonPrimary';
@@ -8,94 +7,50 @@ import { Grid } from '../../../../components/DataGrid';
 import { Input } from '../../../../components/Input';
 import { RegisterCollectionAndDeliveries } from '../../../../components/RegisterCollectionAndDeliveries';
 import { Typography } from '../../../../components/Typography';
-import { dbFirestore } from '../../../../firebase/config';
-import { accountId } from '../../../../firebase/firestore/Account';
-import { IPerson } from '../../../../models/Person';
+import { getCollectionsAndDeliveries } from '../../../../firebase/firestore/CollectAndDeliveries';
+import { ICollectionsAndDeliveries } from '../../../../models/CollectionsAndDeliveries';
 import { TRegistrationType } from '../../../../models/types';
 
 const columns: GridColDef[] = [
-    { field: 'collectStatus', headerName: 'Coleta', flex: 1 },
-    { field: 'deliveryStatus', headerName: 'Entrega', flex: 1 },
-    { field: 'deliveryman', headerName: 'Entregador', flex: 1 },
-    { field: 'deliveryValue', headerName: 'Valor da Entrega', flex: 1 },
+    { field: 'collectStatus', headerName: 'Status da coleta', flex: 1 },
+    { field: 'period', headerName: 'Período', flex: 1 },
+    {
+        field: 'senderCity',
+        headerName: 'Cidade',
+        flex: 1,
+        renderCell: (params) => (
+            <div>{params.row?.sender?.address?.city?.name}</div>
+        ),
+    },
+    {
+        field: 'senderDistrict',
+        headerName: 'Bairro',
+        flex: 1,
+        renderCell: (params) => (
+            <div>{params.row?.sender?.address?.district}</div>
+        ),
+    },
+    {
+        field: 'deliveryman',
+        headerName: 'Entregador',
+        flex: 1,
+        renderCell: (params) => (
+            <div>{params.row?.deliverymanCollect?.name}</div>
+        ),
+    },
 ];
 
 export const RegistrationOfDelivery: React.FC = () => {
     const [registerIsVisible, setRegisterIsVisible] = useState(false);
     const [typeRegister, setTypeRegister] = useState<TRegistrationType>('CREATE');
+    const [loading, setLoading] = useState(true);
 
-    const [collectionsAndDeliveries, setCollectionsAndDeliveries] = useState<GridRowsProp<IPerson>>([]);
+    const [collectionsAndDeliveries, setCollectionsAndDeliveries] = useState<GridRowsProp<ICollectionsAndDeliveries>>([]);
 
     useEffect(() => {
-        const queryCollection = query(collection(dbFirestore, 'contas', accountId, 'coletas_entregas'));
-
-        const dataList = onSnapshot(queryCollection, (snapShot) => {
-            snapShot.docChanges().forEach((change) => {
-                const doc = Object.assign(change.doc.data(), { id: change.doc.id });
-
-                switch (change.type) {
-                    case 'added':
-                        setCollectionsAndDeliveries((prevState) => [...prevState, {
-                            id: doc.id,
-                            name: doc.nome,
-                            phone: doc.celular,
-                            cpf: doc?.cpf || '',
-                            rg: doc?.rg || '',
-                            userRef: doc?.usario_ref || '',
-                            address: {
-                                zipCode: doc?.endereco?.cep || '',
-                                district: doc?.endereco?.bairro || '',
-                                complement: doc?.endereco?.complemento || '',
-                                street: doc?.endereco?.logradouro || '',
-                                country: doc?.endereco?.pais || '',
-                                ref: doc?.endereco?.ref || '',
-                                reference: doc?.endereco?.referencia || '',
-                                number: doc?.endereco?.numero || '',
-                                state: doc?.endereco?.uf || '',
-                                city: {
-                                    name: doc?.endereco?.cidade?.nome || '',
-                                    ref: doc?.endereco?.cidade?.ref || '',
-                                },
-                            },
-                        } as IPerson]);
-                        break;
-
-                    case 'removed':
-                        setCollectionsAndDeliveries((prevState) => prevState.filter((data) => data.id !== doc.id));
-                        break;
-
-                    case 'modified': {
-                        setCollectionsAndDeliveries((prevState) => prevState.filter((data) => data.id !== doc.id));
-                        setCollectionsAndDeliveries((prevState) => [...prevState, {
-                            id: doc.id,
-                            name: doc.nome,
-                            phone: doc.celular,
-                            cpf: doc?.cpf || '',
-                            rg: doc?.rg || '',
-                            userRef: doc?.usario_ref || '',
-                            address: {
-                                zipCode: doc?.endereco?.cep || '',
-                                district: doc?.endereco?.bairro || '',
-                                complement: doc?.endereco?.complemento || '',
-                                street: doc?.endereco?.logradouro || '',
-                                country: doc?.endereco?.pais || '',
-                                ref: doc?.endereco?.ref || '',
-                                reference: doc?.endereco?.referencia || '',
-                                number: doc?.endereco?.numero || '',
-                                state: doc?.endereco?.uf || '',
-                                city: {
-                                    name: doc?.endereco?.cidade?.nome || '',
-                                    ref: doc?.endereco?.cidade?.ref || '',
-                                },
-                            },
-                        } as IPerson]);
-                        break;
-                    }
-                }
-            });
-        });
-
-        return () => dataList();
+        getCollectionsAndDeliveries()
+            .then((data) => data && setCollectionsAndDeliveries(data))
+            .finally(() => setLoading(false));
     }, []);
 
     const handleNewRegister = useCallback(() => {
@@ -139,6 +94,7 @@ export const RegistrationOfDelivery: React.FC = () => {
                     <Grid
                         rows={collectionsAndDeliveries}
                         columns={columns}
+                        loading={loading}
                         checkboxSelection
                         onDelete={(item) => console.log(item, 'delete')}
                         onEdit={(item) => console.log(item, 'edit')}

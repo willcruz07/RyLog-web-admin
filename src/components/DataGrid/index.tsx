@@ -14,6 +14,7 @@ import './styles.scss';
 interface IDataGridProps {
     rows: GridRowsProp;
     columns: GridColDef[];
+    loading?: boolean;
     onEdit?: (item: any) => void;
     onDelete?: (item: any) => void;
     checkboxSelection?: boolean;
@@ -97,7 +98,7 @@ function CustomNoRowsOverlay() {
     );
 }
 
-export const Grid: React.FC<IDataGridProps> = ({ columns, rows, checkboxSelection, onDelete, onEdit }) => {
+export const Grid: React.FC<IDataGridProps> = ({ columns, rows, checkboxSelection, loading, onDelete, onEdit }) => {
     const [listColumns, setListColumns] = useState<GridColDef[]>(columns);
 
     useEffect(() => {
@@ -153,6 +154,7 @@ export const Grid: React.FC<IDataGridProps> = ({ columns, rows, checkboxSelectio
                 sx={{ borderColor: Colors.gray }}
                 disableColumnFilter
                 disableColumnMenu
+                loading={loading}
                 autoPageSize
                 disableSelectionOnClick
                 checkboxSelection={checkboxSelection}

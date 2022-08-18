@@ -1,7 +1,7 @@
 import { Formik } from 'formik';
 import React, { useCallback, useEffect, useState } from 'react';
 import * as Yup from 'yup';
-import { getCollectAndDeliveries, IGetCollectDeliveries } from '../../firebase/firestore/CollectAndDeliveries';
+import { getCollectAndDeliveriesAmount, IGetCollectDeliveries } from '../../firebase/firestore/CollectAndDeliveries';
 import { ICitiesServed, setDeliveryman } from '../../firebase/firestore/Deliveryman';
 import { TRegistrationType } from '../../models/types';
 import { formattedCPF, formattedLicensePlate, formattedPhone, removeMask } from '../../utils/LIB';
@@ -43,7 +43,7 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
     }, []);
 
     const loadCitiesServed = async () => {
-        const cities = await getCollectAndDeliveries();
+        const cities = await getCollectAndDeliveriesAmount();
         if (cities) {
             setCitiesServed(cities);
 

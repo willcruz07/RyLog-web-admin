@@ -2,7 +2,7 @@ import { Formik } from 'formik';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import * as Yup from 'yup';
 import { getCities, ICity } from '../../firebase/firestore/Cities';
-import { setCollectAndDeliveries } from '../../firebase/firestore/CollectAndDeliveries';
+import { addCollectAndDeliveriesAmount } from '../../firebase/firestore/CollectAndDeliveries';
 import { TRegistrationType } from '../../models/types';
 import { formattedCurrency } from '../../utils/LIB';
 import { ButtonPrimary } from '../ButtonPrimary';
@@ -70,7 +70,7 @@ export const RegisterCollectionAndDeliveries: React.FC<IRegisterCollectionAndDel
     const handleSubmitRegister = useCallback(async (data: IData) => {
         setLoading(true);
 
-        setCollectAndDeliveries({
+        addCollectAndDeliveriesAmount({
             to: listOfCity.filter((item) => item.id === data.to)[0],
             from: listOfCity.filter((item) => item.id === data.from)[0],
             collectionAmount: formattedCurrency(data.collectionAmount, true) as number,
