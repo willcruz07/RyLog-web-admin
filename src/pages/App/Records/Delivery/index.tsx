@@ -5,11 +5,10 @@ import { ButtonPrimary } from '../../../../components/ButtonPrimary';
 import { ContentAnimate } from '../../../../components/ContentAnimate';
 import { Grid } from '../../../../components/DataGrid';
 import { Input } from '../../../../components/Input';
-import { RegisterCollectionAndDeliveries } from '../../../../components/RegisterCollectionAndDeliveries';
+import { RegisterDeliverymanInCollectionAndDeliveries } from '../../../../components/RegisterDeliverymanInCollectionAndDeliveries';
 import { Typography } from '../../../../components/Typography';
 import { getCollectionsAndDeliveries } from '../../../../firebase/firestore/CollectAndDeliveries';
 import { ICollectionsAndDeliveries } from '../../../../models/CollectionsAndDeliveries';
-import { TRegistrationType } from '../../../../models/types';
 
 const columns: GridColDef[] = [
     { field: 'deliveryStatus', headerName: 'Status da coleta', width: 170 },
@@ -38,39 +37,42 @@ const columns: GridColDef[] = [
         flex: 2,
         minWidth: 200,
         renderCell: (params) => (
-            <div>{params.row?.deliverymanCollect?.name}</div>
+            <div>{params.row?.deliverymanDelivery?.name}</div>
         ),
     },
 ];
 
 export const RegistrationOfDelivery: React.FC = () => {
     const [registerIsVisible, setRegisterIsVisible] = useState(false);
-    const [typeRegister, setTypeRegister] = useState<TRegistrationType>('CREATE');
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
 
-    const [collectionsSelected, setCollectionsSelected] = useState<GridSelectionModel>([]);
+    const [deliveriesSelected, setDeliveriesSelected] = useState<GridSelectionModel>([]);
 
     const [collectionsAndDeliveries, setCollectionsAndDeliveries] = useState<GridRowsProp<ICollectionsAndDeliveries>>([]);
     const [fullCollectionsAndDeliveries, setFullCollectionsAndDeliveries] = useState<GridRowsProp<ICollectionsAndDeliveries>>([]);
 
     useEffect(() => {
+        loadingCollectionsAndDeliveries();
+    }, []);
+
+    const loadingCollectionsAndDeliveries = () => {
+        setLoading(true);
         getCollectionsAndDeliveries('DELIVERY')
             .then((data) => {
                 setCollectionsAndDeliveries(data);
                 setFullCollectionsAndDeliveries(data);
             })
             .finally(() => setLoading(false));
-    }, []);
+    };
 
     const handleNewRegister = useCallback(() => {
-        setTypeRegister('CREATE');
         setRegisterIsVisible(true);
     }, []);
 
     const handleFilterGrid = (text: string) => {
         const list = fullCollectionsAndDeliveries.filter((item) => (
-            item.collectStatus.toLocaleLowerCase().includes(text.toLowerCase()) ||
+            item.deliveryStatus.toLocaleLowerCase().includes(text.toLowerCase()) ||
             item.period.toLocaleLowerCase().includes(text.toLowerCase()) ||
             item.receiver.address.district.toLowerCase().includes(text.toLowerCase()) ||
             item.receiver.address.city.name.toLowerCase().includes(text.toLowerCase()) ||
@@ -121,19 +123,25 @@ export const RegistrationOfDelivery: React.FC = () => {
                         columns={columns}
                         loading={loading}
                         checkboxSelection
-                        isRowSelectable={(params) => validateRowSelected(params.row.collectStatus)}
-                        selectionModel={collectionsSelected}
-                        onSetSelectionModel={setCollectionsSelected}
+                        isRowSelectable={(params) => validateRowSelected(params.row.deliveryStatus)}
+                        selectionModel={deliveriesSelected}
+                        onSetSelectionModel={setDeliveriesSelected}
                         onViewing={(item) => console.log(item, 'visualizar')}
                     />
 
                 </div>
             </ContentAnimate>
 
-            <RegisterCollectionAndDeliveries
+            <RegisterDeliverymanInCollectionAndDeliveries
                 isVisible={registerIsVisible}
-                onClose={setRegisterIsVisible}
-                type={typeRegister}
+                onClose={(data) => {
+                    setRegisterIsVisible(false);
+                    if (data) {
+                        loadingCollectionsAndDeliveries();
+                    }
+                }}
+                listOfCollectionsAndDeliveries={deliveriesSelected as string[]}
+                type="DELIVERY"
             />
 
         </>

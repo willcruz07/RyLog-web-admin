@@ -1,0 +1,31 @@
+@import '../../styles/variables.scss';
+
+.container-form-register-deliveryman {    
+    display: grid;       
+
+    width: 100%;
+
+    min-width: $d--600;
+    max-height: $d--500;
+
+    margin-bottom: $d--8;
+    overflow: auto;    
+
+    &__row-1 {
+        display: grid;
+        grid-template-columns: 3fr $d--150;
+        gap: $d--8;
+    }
+
+    &__row-2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);   
+        gap: $d--8;             
+        margin-top: $d--4;  
+
+    }
+   
+    @media(max-width: $d--700) {
+        min-width: 100%;            
+    }     
+}

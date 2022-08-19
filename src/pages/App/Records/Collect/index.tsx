@@ -5,11 +5,10 @@ import { ButtonPrimary } from '../../../../components/ButtonPrimary';
 import { ContentAnimate } from '../../../../components/ContentAnimate';
 import { Grid } from '../../../../components/DataGrid';
 import { Input } from '../../../../components/Input';
-import { RegisterCollectionAndDeliveries } from '../../../../components/RegisterCollectionAndDeliveries';
+import { RegisterDeliverymanInCollectionAndDeliveries } from '../../../../components/RegisterDeliverymanInCollectionAndDeliveries';
 import { Typography } from '../../../../components/Typography';
 import { getCollectionsAndDeliveries } from '../../../../firebase/firestore/CollectAndDeliveries';
 import { ICollectionsAndDeliveries } from '../../../../models/CollectionsAndDeliveries';
-import { TRegistrationType } from '../../../../models/types';
 
 const columns: GridColDef[] = [
     { field: 'collectStatus', headerName: 'Status da coleta', width: 170 },
@@ -45,7 +44,7 @@ const columns: GridColDef[] = [
 
 export const RegistrationOfCollect: React.FC = () => {
     const [registerIsVisible, setRegisterIsVisible] = useState(false);
-    const [typeRegister, setTypeRegister] = useState<TRegistrationType>('CREATE');
+    // const [typeRegister, setTypeRegister] = useState<TRegistrationType>('CREATE');
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
 
@@ -55,16 +54,20 @@ export const RegistrationOfCollect: React.FC = () => {
     const [fullCollectionsAndDeliveries, setFullCollectionsAndDeliveries] = useState<GridRowsProp<ICollectionsAndDeliveries>>([]);
 
     useEffect(() => {
+        loadingCollectionsAndDeliveries();
+    }, []);
+
+    const loadingCollectionsAndDeliveries = () => {
+        setLoading(true);
         getCollectionsAndDeliveries('COLLECT')
             .then((data) => {
                 setCollectionsAndDeliveries(data);
                 setFullCollectionsAndDeliveries(data);
             })
             .finally(() => setLoading(false));
-    }, []);
+    };
 
     const handleNewRegister = useCallback(() => {
-        setTypeRegister('CREATE');
         setRegisterIsVisible(true);
     }, []);
 
@@ -130,10 +133,16 @@ export const RegistrationOfCollect: React.FC = () => {
                 </div>
             </ContentAnimate>
 
-            <RegisterCollectionAndDeliveries
+            <RegisterDeliverymanInCollectionAndDeliveries
                 isVisible={registerIsVisible}
-                onClose={setRegisterIsVisible}
-                type={typeRegister}
+                onClose={(data) => {
+                    setRegisterIsVisible(false);
+                    if (data) {
+                        loadingCollectionsAndDeliveries();
+                    }
+                }}
+                listOfCollectionsAndDeliveries={collectionsSelected as string[]}
+                type="COLLECT"
             />
 
         </>

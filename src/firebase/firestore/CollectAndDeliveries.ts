@@ -1,11 +1,17 @@
-import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore';
+import { collection, doc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { IAmountCollectDeliveries, IGetCollectDeliveries } from '../../models/AmountCollectionAndDeliveries';
-import { ICollectionsAndDeliveries } from '../../models/CollectionsAndDeliveries';
+import { ICollectionsAndDeliveries, IDeliverymanCollectDelivery } from '../../models/CollectionsAndDeliveries';
 import { getDateFirebase } from '../../utils/LIB';
 import { dbFirestore } from '../config';
 import { accountId } from './Account';
 
 type TCollectionsAndDeliveries = 'COLLECT' | 'DELIVERY';
+
+interface IDeliverymanToCollectionAndDeliveriesDTO extends IDeliverymanCollectDelivery {
+    collectionAndDeliveriesID: string;
+    type: 'COLLECT' | 'DELIVERY';
+
+}
 
 export const addCollectAndDeliveriesAmount = async (data: IAmountCollectDeliveries): Promise<void> => {
     try {
@@ -128,9 +134,34 @@ export const getCollectionsAndDeliveries = async (params: TCollectionsAndDeliver
                     },
                 },
             },
+            deliverymanCollect: {
+                name: doc.data()?.entregador_coleta?.nome || '',
+                deliverymanRef: doc.data()?.entregador_coleta?.ref || '',
+            },
+            deliverymanDelivery: {
+                name: doc.data()?.entregador_entrega?.nome,
+                deliverymanRef: doc.data()?.entregador_entrega?.ref || '',
+            },
 
         });
     });
 
     return listCollectionsAndDeliveries;
+};
+
+export const addDeliverymanToCollectionAndDeliveries = async (data: IDeliverymanToCollectionAndDeliveriesDTO) => {
+    const docToCollection = doc(dbFirestore, 'contas', accountId, 'coletas_entregas', data.collectionAndDeliveriesID);
+
+    const field = data.type === 'COLLECT' ? 'entregador_coleta' : 'entregador_entrega';
+
+    try {
+        await updateDoc(docToCollection, {
+            [field]: {
+                nome: data.name,
+                ref: data.deliverymanRef,
+            },
+        });
+    } catch (error) {
+        throw new Error('Não foi possível atualizar a coleta');
+    }
 };

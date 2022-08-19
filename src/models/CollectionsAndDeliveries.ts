@@ -1,7 +1,7 @@
 import { IPerson } from './Person';
 import { TCollectStatus, TDeliveryStatus, TPeriod } from './types';
 
-interface IDeliverymanCollectDelivery {
+export interface IDeliverymanCollectDelivery {
     name: string;
     deliverymanRef: string;
 }
