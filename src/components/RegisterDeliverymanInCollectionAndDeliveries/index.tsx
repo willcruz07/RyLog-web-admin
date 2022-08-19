@@ -96,39 +96,42 @@ export const RegisterDeliverymanInCollectionAndDeliveries: React.FC<IRegisterDel
     }), [deliveryman]);
 
     return (
-        <Modal
-            isVisible={isVisible}
-            onClose={onClose}
-            title="Vincular entregador"
-            fullScreenMobile
-        >
-            <Formik
-                validationSchema={validationSchema}
-                initialValues={{ deliveryman: '' }}
-                onSubmit={({ deliveryman }) => {
-                    handleSubmitRegister({ deliveryman });
-                }}
+        <>
+            <Modal
+                isVisible={isVisible}
+                onClose={onClose}
+                title="Vincular entregador"
+                fullScreenMobile
             >
-                {({ handleChange, handleSubmit, values }) => (
-                    <form className="container-form-register-deliveryman">
-                        <InputSelectAutoComplete
-                            items={getDeliverymanOrder}
-                            label="Entregador"
-                            required
-                            placeholder="Informe o nome do entregador"
-                            selectedValues={values.deliveryman}
-                            setSelectedValues={handleChange('deliveryman')}
-                        />
+                <Formik
+                    validationSchema={validationSchema}
+                    initialValues={{ deliveryman: '' }}
+                    onSubmit={({ deliveryman }) => {
+                        handleSubmitRegister({ deliveryman });
+                    }}
+                >
+                    {({ handleChange, handleSubmit, values }) => (
+                        <form className="container-form-register-deliveryman">
+                            <InputSelectAutoComplete
+                                items={getDeliverymanOrder}
+                                label="Entregador"
+                                required
+                                placeholder="Informe o nome do entregador"
+                                selectedValues={values.deliveryman}
+                                setSelectedValues={handleChange('deliveryman')}
+                            />
 
-                        <ButtonPrimary
-                            title="Salvar"
-                            onClick={handleSubmit}
-                            marginTop={32}
-                        />
-                    </form>
-                )}
-            </Formik>
-            <LoaderFullScreen isVisible={loading} />
+                            <ButtonPrimary
+                                title="Salvar"
+                                onClick={handleSubmit}
+                                marginTop={32}
+                            />
+                        </form>
+                    )}
+                </Formik>
+                <LoaderFullScreen isVisible={loading} />
+
+            </Modal>
 
             <Message
                 isVisible={messageIsVisible}
@@ -141,6 +144,6 @@ export const RegisterDeliverymanInCollectionAndDeliveries: React.FC<IRegisterDel
                 type="DANGER"
                 message={message}
             />
-        </Modal>
+        </>
     );
 };

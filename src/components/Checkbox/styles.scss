@@ -1,0 +1,34 @@
+@import '../../styles/variables.scss';
+
+.container-checkbox {
+    display: flex;
+    align-items: center;    
+
+    cursor: pointer;
+
+    input[type="checkbox"] {    
+        appearance: none;       
+    }
+
+    svg {
+        font-size: $d--20;        
+    }
+    
+    .checked {
+        color: $color-primary;
+        filter: brightness(0.8);
+    }
+
+    .un-checked {
+        color: $color-gray;
+        filter: brightness(0.8);
+    }
+
+    span {
+        font-family: $font-primary;
+        font-weight: 600;
+        font-size: $d--15;
+        color: $font-primary-color;
+        margin-left: $d--4;
+    }
+}

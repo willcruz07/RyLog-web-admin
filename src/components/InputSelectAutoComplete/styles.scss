@@ -20,7 +20,7 @@
 
     .MuiOutlinedInput-root {
         fieldset {
-            border-color: $color-gray;
+            border-color: $color-gray;              
         }
 
         &:hover fieldset {
@@ -53,11 +53,13 @@
         color: $font-primary-color;                
     }
 
-    .auto-complete {
+    .auto-complete {       
 
         ::placeholder {
             color: $color-black-300;
             opacity: 0.6;
         }
+
+        background-color: $color-white;
     }
 }

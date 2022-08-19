@@ -18,6 +18,12 @@ export const combineReducer = (reducers: any) => (state: any = {}, action: any) 
     return newState;
 };
 
+export const getStartOfWeek = (): Date => {
+    const dateBase = new Date();
+
+    // const firstDay = dateBase.getDate() - dateBase.getDay();
+};
+
 export const addZeroLeft = (number: number): string => (number < 10 ? `0${number}` : `${number}`);
 
 export const formattedPhone = (value: string) => {

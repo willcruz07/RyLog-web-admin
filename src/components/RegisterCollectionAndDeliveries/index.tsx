@@ -94,93 +94,95 @@ export const RegisterCollectionAndDeliveries: React.FC<IRegisterCollectionAndDel
     }), [cities]);
 
     return (
-        <Modal
-            isVisible={isVisible}
-            onClose={onClose}
-            title="Coletas e Entregas"
-            fullScreenMobile
-        >
-            <Formik
-                validationSchema={validationSchema}
-                initialValues={{
-                    from: '',
-                    to: '',
-                    deliveryAmount: '',
-                    collectionAmount: '',
-                }}
-                onSubmit={({ collectionAmount, deliveryAmount, from, to }) => {
-                    handleSubmitRegister({
-                        collectionAmount,
-                        deliveryAmount,
-                        from,
-                        to,
-                    });
-                }}
+        <>
+            <Modal
+                isVisible={isVisible}
+                onClose={onClose}
+                title="Coletas e Entregas"
+                fullScreenMobile
             >
-                {({ handleChange, handleSubmit, values, errors }) => (
-                    <form className="container-form-register-deliveryman">
-                        <div className="container-form-register-deliveryman__row-2">
-                            <InputSelectAutoComplete
-                                items={getCitieOrdenaded}
-                                label="De"
-                                required
-                                placeholder="Informe a cidade de origem"
-                                selectedValues={values.from}
-                                setSelectedValues={handleChange('from')}
+                <Formik
+                    validationSchema={validationSchema}
+                    initialValues={{
+                        from: '',
+                        to: '',
+                        deliveryAmount: '',
+                        collectionAmount: '',
+                    }}
+                    onSubmit={({ collectionAmount, deliveryAmount, from, to }) => {
+                        handleSubmitRegister({
+                            collectionAmount,
+                            deliveryAmount,
+                            from,
+                            to,
+                        });
+                    }}
+                >
+                    {({ handleChange, handleSubmit, values, errors }) => (
+                        <form className="container-form-register-deliveryman">
+                            <div className="container-form-register-deliveryman__row-2">
+                                <InputSelectAutoComplete
+                                    items={getCitieOrdenaded}
+                                    label="De"
+                                    required
+                                    placeholder="Informe a cidade de origem"
+                                    selectedValues={values.from}
+                                    setSelectedValues={handleChange('from')}
+                                />
+
+                                <InputSelectAutoComplete
+                                    items={getCitieOrdenaded}
+                                    label="Para"
+                                    required
+                                    selectedValues={values.to}
+                                    placeholder="Informe a cidade de destino"
+                                    setSelectedValues={handleChange('to')}
+                                />
+                            </div>
+
+                            <div className="container-form-register-deliveryman__row-2">
+                                <Input
+                                    currency
+                                    required
+                                    label="Valor da coleta"
+                                    placeholder="Informe o valor da coleta"
+                                    onChange={handleChange('collectionAmount')}
+                                    value={formattedCurrency(values.collectionAmount)}
+                                    type="text"
+                                    marginTop={8}
+                                    error={errors.collectionAmount}
+                                />
+
+                                <Input
+                                    currency
+                                    required
+                                    label="Valor da entrega"
+                                    placeholder="Informe o valor da entrega"
+                                    onChange={handleChange('deliveryAmount')}
+                                    value={formattedCurrency(values.deliveryAmount)}
+                                    type="text"
+                                    marginTop={8}
+                                    error={errors.deliveryAmount}
+                                />
+                            </div>
+
+                            <ButtonPrimary
+                                title="Salvar"
+                                onClick={handleSubmit}
+                                marginTop={32}
                             />
+                        </form>
+                    )}
+                </Formik>
+                <LoaderFullScreen isVisible={loading} />
 
-                            <InputSelectAutoComplete
-                                items={getCitieOrdenaded}
-                                label="Para"
-                                required
-                                selectedValues={values.to}
-                                placeholder="Informe a cidade de destino"
-                                setSelectedValues={handleChange('to')}
-                            />
-                        </div>
-
-                        <div className="container-form-register-deliveryman__row-2">
-                            <Input
-                                currency
-                                required
-                                label="Valor da coleta"
-                                placeholder="Informe o valor da coleta"
-                                onChange={handleChange('collectionAmount')}
-                                value={formattedCurrency(values.collectionAmount)}
-                                type="text"
-                                marginTop={8}
-                                error={errors.collectionAmount}
-                            />
-
-                            <Input
-                                currency
-                                required
-                                label="Valor da entrega"
-                                placeholder="Informe o valor da entrega"
-                                onChange={handleChange('deliveryAmount')}
-                                value={formattedCurrency(values.deliveryAmount)}
-                                type="text"
-                                marginTop={8}
-                                error={errors.deliveryAmount}
-                            />
-                        </div>
-
-                        <ButtonPrimary
-                            title="Salvar"
-                            onClick={handleSubmit}
-                            marginTop={32}
-                        />
-                    </form>
-                )}
-            </Formik>
-            <LoaderFullScreen isVisible={loading} />
-
+            </Modal>
             <Message
                 isVisible={messageIsVisible}
                 onClose={setMessageIsVisible}
                 type="DANGER"
                 message={message}
             />
-        </Modal>
+        </>
     );
 };

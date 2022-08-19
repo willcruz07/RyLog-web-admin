@@ -47,5 +47,12 @@
         background-color: $color-white-100;
         border-radius: $d--4;        
     }
+
+    &__row {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: flex-end;        
+    }
 }
 

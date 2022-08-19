@@ -33,6 +33,37 @@
         cursor: pointer;        
     }
 
+    .react-datepicker {
+        background-color: $color-white;
+        border: 1px solid $color-gray;
+        box-shadow: 1px 3px 6px $color-gray;
+
+        &__header {
+            background-color: $color-gray-300;
+        }
+
+        &__current-month {
+            color: $color-black-500;
+            font-family: $font-secondary;
+            font-weight: bold;
+            text-transform: capitalize;
+        }
+
+        &__day-name {
+            color: $font-primary-color;
+            font-family: $font-primary;
+        }
+
+        &__day {
+            color: $color-black-400;
+            font-family: $font-secondary;
+        }
+
+        &__day--selected {
+            background-color: $color-secondary-700;
+            color: $color-white;
+        }
+    }
  
     &__input {
         display: flex;

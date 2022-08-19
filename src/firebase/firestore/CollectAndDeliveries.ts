@@ -1,6 +1,7 @@
-import { collection, doc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import { collection, doc, DocumentData, getDocs, Query, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { IAmountCollectDeliveries, IGetCollectDeliveries } from '../../models/AmountCollectionAndDeliveries';
 import { ICollectionsAndDeliveries, IDeliverymanCollectDelivery } from '../../models/CollectionsAndDeliveries';
+import { TDeliveryStatus, TPeriod } from '../../models/types';
 import { getDateFirebase } from '../../utils/LIB';
 import { dbFirestore } from '../config';
 import { accountId } from './Account';
@@ -10,7 +11,13 @@ type TCollectionsAndDeliveries = 'COLLECT' | 'DELIVERY';
 interface IDeliverymanToCollectionAndDeliveriesDTO extends IDeliverymanCollectDelivery {
     collectionAndDeliveriesID: string;
     type: 'COLLECT' | 'DELIVERY';
+}
 
+interface IParamsGetCollectionAndDeliveries {
+    initialDate: Date;
+    finalDate: Date;
+    period?: TPeriod;
+    status?: TDeliveryStatus;
 }
 
 export const addCollectAndDeliveriesAmount = async (data: IAmountCollectDeliveries): Promise<void> => {
@@ -72,14 +79,42 @@ export const getCollectAndDeliveriesAmount = async (): Promise<IGetCollectDelive
     return listCities;
 };
 
-export const getCollectionsAndDeliveries = async (params: TCollectionsAndDeliveries): Promise<ICollectionsAndDeliveries[]> => {
-    const queryValues = params === 'COLLECT' ?
+const getQueryCollectionsAndDeliveries = (type: TCollectionsAndDeliveries, params: IParamsGetCollectionAndDeliveries): Query<DocumentData> => {
+    const queryValues = type === 'COLLECT' ?
         ['PENDENTE', 'CANCELADA', 'COLETADA'] : ['CONFIRMADA'];
 
-    const docRef = query(
+    if (params.period && !params.status) {
+        return query(
+            collection(dbFirestore, 'contas', accountId, 'coletas_entregas'),
+            where('status_coleta', 'in', queryValues),
+            where('data', '>=', params.initialDate),
+            where('data', '<=', params.finalDate),
+            where('periodo', '==', params.period),
+        );
+    }
+
+    if (!params.period && params.status) {
+        return query(
+            collection(dbFirestore, 'contas', accountId, 'coletas_entregas'),
+            where(type === 'COLLECT'
+                ? 'status_coleta'
+                : 'status_entrega', '==', params.status),
+            where('data', '>=', params.initialDate),
+            where('data', '<=', params.finalDate),
+        );
+    }
+
+    return query(
         collection(dbFirestore, 'contas', accountId, 'coletas_entregas'),
         where('status_coleta', 'in', queryValues),
+        where('data', '>=', params.initialDate),
+        where('data', '<=', params.finalDate),
     );
+};
+
+export const getCollectionsAndDeliveries = async (type: TCollectionsAndDeliveries, params: IParamsGetCollectionAndDeliveries): Promise<ICollectionsAndDeliveries[]> => {
+    const docRef = getQueryCollectionsAndDeliveries(type, params);
+
     const docs = await getDocs(docRef);
 
     const listCollectionsAndDeliveries: ICollectionsAndDeliveries[] = [];

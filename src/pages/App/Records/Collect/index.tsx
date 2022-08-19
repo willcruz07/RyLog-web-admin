@@ -9,6 +9,11 @@ import { RegisterDeliverymanInCollectionAndDeliveries } from '../../../../compon
 import { Typography } from '../../../../components/Typography';
 import { getCollectionsAndDeliveries } from '../../../../firebase/firestore/CollectAndDeliveries';
 import { ICollectionsAndDeliveries } from '../../../../models/CollectionsAndDeliveries';
+import { InputDate } from '../../../../components/InputDate';
+import { Checkbox } from '../../../../components/Checkbox';
+import { InputSelectAutoComplete } from '../../../../components/InputSelectAutoComplete';
+import './styles.scss';
+import { ButtonSecondary } from '../../../../components/ButtonSecondary';
 
 const columns: GridColDef[] = [
     { field: 'collectStatus', headerName: 'Status da coleta', width: 170 },
@@ -42,13 +47,28 @@ const columns: GridColDef[] = [
     },
 ];
 
+const statusList = [
+    { label: 'Pendente', value: 'pending' },
+    { label: 'Cancelada', value: 'cancel' },
+];
+
+const periodList = [
+    { label: 'Manhã', value: 'morning' },
+    { label: 'Tarde', value: 'afternoon' },
+    { label: 'Noite', value: 'night' },
+];
+
 export const RegistrationOfCollect: React.FC = () => {
     const [registerIsVisible, setRegisterIsVisible] = useState(false);
-    // const [typeRegister, setTypeRegister] = useState<TRegistrationType>('CREATE');
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
+    const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
+
+    const [statusSelected, setStatusSelected] = useState('');
+    const [periodSelected, setPeriodSelected] = useState('');
 
     const [collectionsSelected, setCollectionsSelected] = useState<GridSelectionModel>([]);
+    const [pendingSelected, setPendingSelected] = useState(false);
 
     const [collectionsAndDeliveries, setCollectionsAndDeliveries] = useState<GridRowsProp<ICollectionsAndDeliveries>>([]);
     const [fullCollectionsAndDeliveries, setFullCollectionsAndDeliveries] = useState<GridRowsProp<ICollectionsAndDeliveries>>([]);
@@ -69,6 +89,10 @@ export const RegistrationOfCollect: React.FC = () => {
 
     const handleNewRegister = useCallback(() => {
         setRegisterIsVisible(true);
+    }, []);
+
+    const handleChangeFilter = useCallback(() => {
+
     }, []);
 
     const handleFilterGrid = (text: string) => {
@@ -116,7 +140,63 @@ export const RegistrationOfCollect: React.FC = () => {
                             type="text"
                             icon="search"
                             placeholder="Digite sua pesquisa..."
+                            marginBottom={8}
                         />
+
+                        <div className="container-registration__row">
+                            <InputDate
+                                label="Data inicial"
+                                value={dateSelected}
+                                onChange={setDateSelected}
+                                marginRight={16}
+                                marginBottom={8}
+                            />
+
+                            <InputDate
+                                label="Data final"
+                                value={dateSelected}
+                                onChange={setDateSelected}
+                                marginRight={16}
+                                marginBottom={8}
+                            />
+
+                            <div className="container-autocomplete-status-collect">
+                                <InputSelectAutoComplete
+                                    items={statusList}
+                                    label="Status"
+                                    placeholder="Status da coleta"
+                                    selectedValues={statusSelected}
+                                    setSelectedValues={(value) => setStatusSelected(value)}
+                                    marginBottom={8}
+                                />
+                            </div>
+
+                            <div className="container-autocomplete-period-collect">
+                                <InputSelectAutoComplete
+                                    items={periodList}
+                                    label="Período"
+                                    placeholder="Período da coleta"
+                                    selectedValues={periodSelected}
+                                    setSelectedValues={(value) => setPeriodSelected(value)}
+                                    marginBottom={8}
+                                />
+                            </div>
+
+                            <ButtonSecondary
+                                title="Filtrar"
+                                width={100}
+                                onClick={handleChangeFilter}
+                                marginBottom={8}
+                            />
+                        </div>
+
+                        <Checkbox
+                            title="Filtrar coletas sem entregador"
+                            value={pendingSelected}
+                            onChecked={setPendingSelected}
+                            marginTop={8}
+                        />
+
                     </div>
 
                     <Grid
