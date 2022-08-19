@@ -2,13 +2,19 @@ import { GridColDef, GridRowsProp, GridSelectionModel } from '@mui/x-data-grid';
 import React, { useCallback, useEffect, useState } from 'react';
 import { ButtonBack } from '../../../../components/ButtonBack';
 import { ButtonPrimary } from '../../../../components/ButtonPrimary';
+import { ButtonSecondary } from '../../../../components/ButtonSecondary';
+import { Checkbox } from '../../../../components/Checkbox';
 import { ContentAnimate } from '../../../../components/ContentAnimate';
 import { Grid } from '../../../../components/DataGrid';
 import { Input } from '../../../../components/Input';
+import { InputDate } from '../../../../components/InputDate';
+import { InputSelectAutoComplete } from '../../../../components/InputSelectAutoComplete';
 import { RegisterDeliverymanInCollectionAndDeliveries } from '../../../../components/RegisterDeliverymanInCollectionAndDeliveries';
 import { Typography } from '../../../../components/Typography';
 import { getCollectionsAndDeliveries } from '../../../../firebase/firestore/CollectAndDeliveries';
 import { ICollectionsAndDeliveries } from '../../../../models/CollectionsAndDeliveries';
+import { getEndOfWeek, getStartOfWeek } from '../../../../utils/LIB';
+import './styles.scss';
 
 const columns: GridColDef[] = [
     { field: 'deliveryStatus', headerName: 'Status da coleta', width: 170 },
@@ -42,12 +48,30 @@ const columns: GridColDef[] = [
     },
 ];
 
+const statusList = [
+    { label: 'Pendente', value: 'pending' },
+    { label: 'Cancelada', value: 'cancel' },
+];
+
+const periodList = [
+    { label: 'Manhã', value: 'morning' },
+    { label: 'Tarde', value: 'afternoon' },
+    { label: 'Noite', value: 'night' },
+];
+
 export const RegistrationOfDelivery: React.FC = () => {
     const [registerIsVisible, setRegisterIsVisible] = useState(false);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
 
+    const [initialDate, setInitialDate] = useState<Date>(getStartOfWeek());
+    const [finalDate, setFinalDate] = useState<Date>(getEndOfWeek());
+
+    const [statusSelected, setStatusSelected] = useState('');
+    const [periodSelected, setPeriodSelected] = useState('');
+
     const [deliveriesSelected, setDeliveriesSelected] = useState<GridSelectionModel>([]);
+    const [pendingSelected, setPendingSelected] = useState(false);
 
     const [collectionsAndDeliveries, setCollectionsAndDeliveries] = useState<GridRowsProp<ICollectionsAndDeliveries>>([]);
     const [fullCollectionsAndDeliveries, setFullCollectionsAndDeliveries] = useState<GridRowsProp<ICollectionsAndDeliveries>>([]);
@@ -58,7 +82,10 @@ export const RegistrationOfDelivery: React.FC = () => {
 
     const loadingCollectionsAndDeliveries = () => {
         setLoading(true);
-        getCollectionsAndDeliveries('DELIVERY')
+        getCollectionsAndDeliveries('DELIVERY', {
+            initialDate,
+            finalDate,
+        })
             .then((data) => {
                 setCollectionsAndDeliveries(data);
                 setFullCollectionsAndDeliveries(data);
@@ -70,10 +97,12 @@ export const RegistrationOfDelivery: React.FC = () => {
         setRegisterIsVisible(true);
     }, []);
 
+    const handleChangeFilter = useCallback(() => {
+        loadingCollectionsAndDeliveries();
+    }, []);
+
     const handleFilterGrid = (text: string) => {
         const list = fullCollectionsAndDeliveries.filter((item) => (
-            item.deliveryStatus.toLocaleLowerCase().includes(text.toLowerCase()) ||
-            item.period.toLocaleLowerCase().includes(text.toLowerCase()) ||
             item.receiver.address.district.toLowerCase().includes(text.toLowerCase()) ||
             item.receiver.address.city.name.toLowerCase().includes(text.toLowerCase()) ||
             item.deliverymanCollect?.name.toLocaleLowerCase().includes(text.toLowerCase())
@@ -84,6 +113,8 @@ export const RegistrationOfDelivery: React.FC = () => {
     };
 
     const validateRowSelected = (value: string): boolean => !(['CANCELADA', 'CONFIRMADA']).includes(value);
+
+    console.log(collectionsAndDeliveries);
 
     return (
         <>
@@ -115,6 +146,60 @@ export const RegistrationOfDelivery: React.FC = () => {
                             type="text"
                             icon="search"
                             placeholder="Digite sua pesquisa..."
+                        />
+
+                        <div className="container-registration__row">
+                            <InputDate
+                                label="Data inicial"
+                                value={initialDate}
+                                onChange={setInitialDate}
+                                marginRight={16}
+                                marginBottom={8}
+                            />
+
+                            <InputDate
+                                label="Data final"
+                                value={finalDate}
+                                onChange={setFinalDate}
+                                marginRight={16}
+                                marginBottom={8}
+                            />
+
+                            <div className="container-autocomplete-status-delivery">
+                                <InputSelectAutoComplete
+                                    items={statusList}
+                                    label="Status"
+                                    placeholder="Status da coleta"
+                                    selectedValues={statusSelected}
+                                    setSelectedValues={(value) => setStatusSelected(value)}
+                                    marginBottom={8}
+                                />
+                            </div>
+
+                            <div className="container-autocomplete-period-delivery">
+                                <InputSelectAutoComplete
+                                    items={periodList}
+                                    label="Período"
+                                    placeholder="Período da coleta"
+                                    selectedValues={periodSelected}
+                                    setSelectedValues={(value) => setPeriodSelected(value)}
+                                    marginBottom={8}
+                                />
+                            </div>
+
+                            <ButtonSecondary
+                                title="Filtrar"
+                                width={100}
+                                onClick={handleChangeFilter}
+                                marginBottom={8}
+                            />
+                        </div>
+
+                        <Checkbox
+                            title="Filtrar apenas entregas sem entregador"
+                            value={pendingSelected}
+                            onChecked={setPendingSelected}
+                            marginTop={8}
                         />
                     </div>
 

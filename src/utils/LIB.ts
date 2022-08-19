@@ -21,7 +21,15 @@ export const combineReducer = (reducers: any) => (state: any = {}, action: any) 
 export const getStartOfWeek = (): Date => {
     const dateBase = new Date();
 
-    // const firstDay = dateBase.getDate() - dateBase.getDay();
+    const firstDay = dateBase.getDate() - dateBase.getDay();
+    return new Date(dateBase.getFullYear(), dateBase.getMonth(), firstDay);
+};
+
+export const getEndOfWeek = (): Date => {
+    const dateBase = new Date();
+
+    const endDay = (dateBase.getDate() - dateBase.getDay()) + 6;
+    return new Date(dateBase.getFullYear(), dateBase.getMonth(), endDay);
 };
 
 export const addZeroLeft = (number: number): string => (number < 10 ? `0${number}` : `${number}`);

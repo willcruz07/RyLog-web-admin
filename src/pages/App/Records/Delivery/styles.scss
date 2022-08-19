@@ -1,1 +1,11 @@
-@import '../../../styles/variables.scss';
+@import '../../../../styles/variables.scss';
+
+.container-autocomplete-status-delivery {
+    width: $d--200;    
+    margin-right: $d--16;
+}
+
+.container-autocomplete-period-delivery {
+    width: $d--200;
+    margin-right: $d--16;
+}

@@ -14,6 +14,7 @@ import { Checkbox } from '../../../../components/Checkbox';
 import { InputSelectAutoComplete } from '../../../../components/InputSelectAutoComplete';
 import './styles.scss';
 import { ButtonSecondary } from '../../../../components/ButtonSecondary';
+import { getEndOfWeek, getStartOfWeek } from '../../../../utils/LIB';
 
 const columns: GridColDef[] = [
     { field: 'collectStatus', headerName: 'Status da coleta', width: 170 },
@@ -62,7 +63,9 @@ export const RegistrationOfCollect: React.FC = () => {
     const [registerIsVisible, setRegisterIsVisible] = useState(false);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
-    const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
+
+    const [initialDate, setInitialDate] = useState<Date>(getStartOfWeek());
+    const [finalDate, setFinalDate] = useState<Date>(getEndOfWeek());
 
     const [statusSelected, setStatusSelected] = useState('');
     const [periodSelected, setPeriodSelected] = useState('');
@@ -79,7 +82,10 @@ export const RegistrationOfCollect: React.FC = () => {
 
     const loadingCollectionsAndDeliveries = () => {
         setLoading(true);
-        getCollectionsAndDeliveries('COLLECT')
+        getCollectionsAndDeliveries('COLLECT', {
+            initialDate,
+            finalDate,
+        })
             .then((data) => {
                 setCollectionsAndDeliveries(data);
                 setFullCollectionsAndDeliveries(data);
@@ -92,13 +98,11 @@ export const RegistrationOfCollect: React.FC = () => {
     }, []);
 
     const handleChangeFilter = useCallback(() => {
-
+        loadingCollectionsAndDeliveries();
     }, []);
 
     const handleFilterGrid = (text: string) => {
         const list = fullCollectionsAndDeliveries.filter((item) => (
-            item.collectStatus.toLocaleLowerCase().includes(text.toLowerCase()) ||
-            item.period.toLocaleLowerCase().includes(text.toLowerCase()) ||
             item.sender.address.district.toLowerCase().includes(text.toLowerCase()) ||
             item.sender.address.city.name.toLowerCase().includes(text.toLowerCase()) ||
             item.deliverymanCollect?.name.toLocaleLowerCase().includes(text.toLowerCase())
@@ -146,16 +150,16 @@ export const RegistrationOfCollect: React.FC = () => {
                         <div className="container-registration__row">
                             <InputDate
                                 label="Data inicial"
-                                value={dateSelected}
-                                onChange={setDateSelected}
+                                value={initialDate}
+                                onChange={setInitialDate}
                                 marginRight={16}
                                 marginBottom={8}
                             />
 
                             <InputDate
                                 label="Data final"
-                                value={dateSelected}
-                                onChange={setDateSelected}
+                                value={finalDate}
+                                onChange={setFinalDate}
                                 marginRight={16}
                                 marginBottom={8}
                             />
@@ -191,7 +195,7 @@ export const RegistrationOfCollect: React.FC = () => {
                         </div>
 
                         <Checkbox
-                            title="Filtrar coletas sem entregador"
+                            title="Filtrar apenas coletas sem entregador"
                             value={pendingSelected}
                             onChecked={setPendingSelected}
                             marginTop={8}
