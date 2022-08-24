@@ -81,7 +81,7 @@ export const getCollectAndDeliveriesAmount = async (): Promise<IGetCollectDelive
 
 const getQueryCollectionsAndDeliveries = (type: TCollectionsAndDeliveries, params: IParamsGetCollectionAndDeliveries): Query<DocumentData> => {
     const queryValues = type === 'COLLECT' ?
-        ['PENDENTE', 'CANCELADA', 'COLETADA'] : ['CONFIRMADA'];
+        ['PENDENTE', 'CANCELADA', 'COLETADA'] : ['REALIZADA', 'CONFIRMADA'];
 
     if (params.period && !params.status) {
         return query(
