@@ -8,7 +8,7 @@ export interface IDeliverymanCollectDelivery {
 
 export interface ICollectionsAndDeliveries {
     id: string;
-    data: Date;
+    date: Date;
     receiver: IPerson;
     printedLabel: boolean;
     pathSignature: string;

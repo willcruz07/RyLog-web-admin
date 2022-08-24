@@ -13,10 +13,18 @@ import { RegisterDeliverymanInCollectionAndDeliveries } from '../../../../compon
 import { Typography } from '../../../../components/Typography';
 import { getCollectionsAndDeliveries } from '../../../../firebase/firestore/CollectAndDeliveries';
 import { ICollectionsAndDeliveries } from '../../../../models/CollectionsAndDeliveries';
-import { getEndOfWeek, getStartOfWeek } from '../../../../utils/LIB';
+import { dateTimeToStr, getEndOfWeek, getStartOfWeek } from '../../../../utils/LIB';
 import './styles.scss';
 
 const columns: GridColDef[] = [
+    {
+        field: 'date',
+        headerName: 'Data',
+        width: 110,
+        renderCell: (params) => (
+            <div>{dateTimeToStr(params.row?.date)}</div>
+        ),
+    },
     { field: 'deliveryStatus', headerName: 'Status da coleta', width: 170 },
     { field: 'period', headerName: 'Período', width: 130 },
     {
@@ -99,7 +107,7 @@ export const RegistrationOfDelivery: React.FC = () => {
 
     const handleChangeFilter = useCallback(() => {
         loadingCollectionsAndDeliveries();
-    }, []);
+    }, [initialDate, finalDate]);
 
     const handleFilterGrid = (text: string) => {
         const list = fullCollectionsAndDeliveries.filter((item) => (

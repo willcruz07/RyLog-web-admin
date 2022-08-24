@@ -14,9 +14,17 @@ import { Checkbox } from '../../../../components/Checkbox';
 import { InputSelectAutoComplete } from '../../../../components/InputSelectAutoComplete';
 import './styles.scss';
 import { ButtonSecondary } from '../../../../components/ButtonSecondary';
-import { getEndOfWeek, getStartOfWeek } from '../../../../utils/LIB';
+import { dateTimeToStr, getEndOfWeek, getStartOfWeek } from '../../../../utils/LIB';
 
 const columns: GridColDef[] = [
+    {
+        field: 'date',
+        headerName: 'Data',
+        width: 110,
+        renderCell: (params) => (
+            <div>{dateTimeToStr(params.row?.date)}</div>
+        ),
+    },
     { field: 'collectStatus', headerName: 'Status da coleta', width: 170 },
     { field: 'period', headerName: 'Período', width: 130 },
     {
@@ -99,7 +107,7 @@ export const RegistrationOfCollect: React.FC = () => {
 
     const handleChangeFilter = useCallback(() => {
         loadingCollectionsAndDeliveries();
-    }, []);
+    }, [initialDate, finalDate]);
 
     const handleFilterGrid = (text: string) => {
         const list = fullCollectionsAndDeliveries.filter((item) => (

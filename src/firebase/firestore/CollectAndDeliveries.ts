@@ -122,7 +122,7 @@ export const getCollectionsAndDeliveries = async (type: TCollectionsAndDeliverie
     docs.forEach((doc) => {
         listCollectionsAndDeliveries.push({
             id: doc.data()?.uid || '',
-            data: getDateFirebase(doc.data()?.data),
+            date: getDateFirebase(doc.data()?.data),
             collectStatus: doc.data()?.status_coleta || 'PENDENTE',
             deliveryStatus: doc.data()?.status_entrega || 'PENDENTE',
             period: doc.data()?.periodo || 'MANHÃ',
@@ -188,6 +188,8 @@ export const addDeliverymanToCollectionAndDeliveries = async (data: IDeliveryman
     const docToCollection = doc(dbFirestore, 'contas', accountId, 'coletas_entregas', data.collectionAndDeliveriesID);
 
     const field = data.type === 'COLLECT' ? 'entregador_coleta' : 'entregador_entrega';
+    const collectStatus = data.type === 'COLLECT' ? 'PENDENTE' : 'CONFIRMADA';
+    const deliveryStatus = data.type === 'COLLECT' ? '' : 'PENDENTE';
 
     try {
         await updateDoc(docToCollection, {
@@ -195,6 +197,8 @@ export const addDeliverymanToCollectionAndDeliveries = async (data: IDeliveryman
                 nome: data.name,
                 ref: data.deliverymanRef,
             },
+            status_coleta: collectStatus,
+            status_entrega: deliveryStatus,
         });
     } catch (error) {
         throw new Error('Não foi possível atualizar a coleta');

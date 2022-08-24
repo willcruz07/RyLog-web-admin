@@ -52,7 +52,8 @@
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
-        align-items: flex-end;        
+        align-items: flex-end;
+        padding-top: $d--8;        
     }
 }
 
