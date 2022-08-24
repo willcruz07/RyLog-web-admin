@@ -38,14 +38,14 @@ export const RegistrationOfDeliveryman: React.FC = () => {
                 switch (change.type) {
                     case 'added':
                         setDeliveryman((prevState) => [...prevState, {
-                            id: doc.id,
-                            cnh: doc.cnh,
-                            cpf: formattedCPF(doc.cpf),
-                            name: doc.nome,
-                            email: doc.email,
-                            phone: formattedPhone(doc.celular),
-                            licensePlate: doc.emplacamento,
-                            citiesServed: doc.cidadesAtendidas.map((item: any) => ({
+                            id: doc?.id,
+                            cnh: doc?.cnh,
+                            cpf: formattedCPF(doc?.cpf),
+                            name: doc?.nome,
+                            email: doc?.email,
+                            phone: formattedPhone(doc?.celular),
+                            licensePlate: doc?.emplacamento,
+                            citiesServed: doc?.cidadesAtendidas?.map((item: any) => ({
                                 citiesName: item.nome,
                                 collectionAndDeliveryId: item.idCidade,
                             })),
@@ -59,14 +59,14 @@ export const RegistrationOfDeliveryman: React.FC = () => {
                     case 'modified': {
                         setDeliveryman((prevState) => prevState.filter((data) => data.id !== doc.id));
                         setDeliveryman((prevState) => [...prevState, {
-                            id: doc.id,
-                            cnh: doc.cnh,
-                            cpf: formattedCPF(doc.cpf),
-                            name: doc.nome,
-                            email: doc.email,
-                            phone: formattedPhone(doc.celular),
-                            licensePlate: doc.emplacamento,
-                            citiesServed: doc.cidadesAtendidas.map((item: any) => ({
+                            id: doc?.id,
+                            cnh: doc?.cnh,
+                            cpf: formattedCPF(doc?.cpf),
+                            name: doc?.nome,
+                            email: doc?.email,
+                            phone: formattedPhone(doc?.celular),
+                            licensePlate: doc?.emplacamento,
+                            citiesServed: doc?.cidadesAtendidas?.map((item: any) => ({
                                 citiesName: item.nome,
                                 collectionAndDeliveryId: item.idCidade,
                             })),

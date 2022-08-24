@@ -62,9 +62,6 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
     const validationSchema = Yup.object().shape({
         name: Yup.string()
             .required('Informe o nome do entregador'),
-        // email: Yup.string()
-        //     .required('Informe o email')
-        //     .email('Email inválido'),
         cpf: Yup.string()
             .required('Informe o cpf do entregador'),
         cnh: Yup.string()
@@ -87,19 +84,6 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
             }
         });
 
-        // addUserDeliveryman({
-        //     adminPassword: state.user.currentPassword,
-        //     userEmail: data.email,
-        //     userPassword: data.cpf.substring(0, 6),
-        // }).then((users) => {
-        //     if (users) {
-        //         getUserData(users.adminCredential.user.email || '')
-        //             .then((user) => {
-        //                 if (user) {
-        //                     dispatch(setUser(user));
-        //                 }
-        //             });
-
         setDeliveryman({
             phone: data.phone,
             name: data.name,
@@ -118,8 +102,6 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
                 setLoading(false);
                 onClose(false);
             });
-        // }
-        // }).catch(() => setLoading(false));
     }, [citiesServed]);
 
     return (
