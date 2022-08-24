@@ -1,8 +1,9 @@
 import { Formik } from 'formik';
 import React, { useCallback, useEffect, useState } from 'react';
 import * as Yup from 'yup';
-import { getCollectAndDeliveriesAmount, IGetCollectDeliveries } from '../../firebase/firestore/CollectAndDeliveries';
+import { getCollectAndDeliveriesAmount } from '../../firebase/firestore/CollectAndDeliveries';
 import { ICitiesServed, setDeliveryman } from '../../firebase/firestore/Deliveryman';
+import { IGetCollectDeliveries } from '../../models/AmountCollectionAndDeliveries';
 import { TRegistrationType } from '../../models/types';
 import { formattedCPF, formattedLicensePlate, formattedPhone, removeMask } from '../../utils/LIB';
 import { ButtonPrimary } from '../ButtonPrimary';

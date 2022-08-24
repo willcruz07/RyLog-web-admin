@@ -6,7 +6,7 @@ export const setUser = (data: IUserWeb): ISetUser => ({
 });
 
 export const setCurrentPassword = (data: string): ISetCurrentPassword => ({
-    type: EUserTypes.setPassword,
+    type: EUserTypes.setCurrentPassword,
     payload: data,
 });
 
