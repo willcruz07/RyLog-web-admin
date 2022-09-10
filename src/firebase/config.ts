@@ -4,7 +4,7 @@ import { getAuth } from 'firebase/auth';
 import { getStorage, ref } from 'firebase/storage';
 
 const config = {
-    apiKey: 'AIzaSyDIBBOVRbgqzDUPTIz6OkfGSV_1O_fUN20',
+    apiKey: 'AIzaSyCocFqGPjk7V9BL9zFbjBDZun0V_WBbTwo',
     authDomain: 'ry-log-prod.firebaseapp.com',
     projectId: 'ry-log-prod',
     storageBucket: 'ry-log-prod.appspot.com',
