@@ -32,6 +32,7 @@ export const RegistrationOfCities: React.FC = () => {
     const [typeRegister, setTypeRegister] = useState<TRegistrationType>('CREATE');
 
     const [collectionsAndDeliveries, setCollectionsAndDeliveries] = useState<GridRowsProp<ICity>>([]);
+    const [dataSelected, setDataSelected] = useState<ICity>();
 
     useEffect(() => {
         const queryCollection = query(collection(dbFirestore, 'valores_de_coletas_entregas'));
@@ -43,8 +44,8 @@ export const RegistrationOfCities: React.FC = () => {
                     case 'added':
                         setCollectionsAndDeliveries((prevState) => [...prevState, {
                             id: doc.id,
-                            collectionValue: formattedCurrency(doc.valorDaColeta),
-                            deliveryValue: formattedCurrency(doc.valorDaEntrega),
+                            collectionValue: formattedCurrency(doc.valor_coleta),
+                            deliveryValue: formattedCurrency(doc.valor_entrega),
                             from: doc.origem.nome,
                             to: doc.destino.nome,
                         } as ICity]);
@@ -58,8 +59,8 @@ export const RegistrationOfCities: React.FC = () => {
                         setCollectionsAndDeliveries((prevState) => prevState.filter((data) => data.id !== doc.id));
                         setCollectionsAndDeliveries((prevState) => [...prevState, {
                             id: doc.id,
-                            collectionValue: formattedCurrency(doc.valorDaColeta),
-                            deliveryValue: formattedCurrency(doc.valorDaEntrega),
+                            collectionValue: formattedCurrency(doc.valor_coleta),
+                            deliveryValue: formattedCurrency(doc.valor_entrega),
                             from: doc.origem.nome,
                             to: doc.destino.nome,
                         } as ICity]);
@@ -74,7 +75,20 @@ export const RegistrationOfCities: React.FC = () => {
 
     const handleNewRegister = useCallback(() => {
         setTypeRegister('CREATE');
+        setDataSelected(undefined);
         setRegisterIsVisible(true);
+    }, []);
+
+    const handleUpdateRoute = useCallback((item: ICity) => {
+        setTypeRegister('UPDATE');
+
+        setDataSelected(item);
+
+        setRegisterIsVisible(true);
+    }, []);
+
+    const handleRemoveRoute = useCallback((docId: string) => {
+        console.log(docId);
     }, []);
 
     return (
@@ -113,8 +127,8 @@ export const RegistrationOfCities: React.FC = () => {
                     <Grid
                         rows={collectionsAndDeliveries}
                         columns={columns}
-                        onDelete={(item) => console.log(item, 'delete')}
-                        onEdit={(item) => console.log(item, 'edit')}
+                        onDelete={handleRemoveRoute}
+                        onEdit={handleUpdateRoute}
                     />
 
                 </div>
@@ -124,6 +138,13 @@ export const RegistrationOfCities: React.FC = () => {
                 isVisible={registerIsVisible}
                 onClose={setRegisterIsVisible}
                 type={typeRegister}
+                data={dataSelected ? {
+                    collectionAmount: dataSelected.collectionValue,
+                    deliveryAmount: dataSelected.deliveryValue,
+                    from: dataSelected.from,
+                    to: dataSelected.to,
+                    id: dataSelected.id,
+                } : undefined}
             />
 
         </>

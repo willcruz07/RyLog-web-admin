@@ -6,9 +6,8 @@ export const userInitialState: IUserState = {
     data: {
         id: '',
         email: '',
-        isAdmin: false,
         name: '',
-        webAccess: false,
+        admin: false,
     },
 };
 

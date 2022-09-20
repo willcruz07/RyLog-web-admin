@@ -2,7 +2,7 @@ import { Formik } from 'formik';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import * as Yup from 'yup';
 import { getCities, ICity } from '../../firebase/firestore/Cities';
-import { addCollectAndDeliveriesAmount } from '../../firebase/firestore/CollectAndDeliveries';
+import { addCollectAndDeliveriesAmount, checkDocumentCollectionAndDeliveriesAmount, updateCollectAndDeliveriesAmount } from '../../firebase/firestore/CollectAndDeliveries';
 import { TRegistrationType } from '../../models/types';
 import { formattedCurrency } from '../../utils/LIB';
 import { ButtonPrimary } from '../ButtonPrimary';
@@ -15,20 +15,22 @@ import { Modal } from '../Modal';
 
 import './styles.scss';
 
-interface IRegisterCollectionAndDeliveries {
-    isVisible: boolean;
-    onClose(close: false): void;
-    type: TRegistrationType;
-}
-
 interface IData {
     from: string;
     to: string;
     deliveryAmount: string;
     collectionAmount: string;
+    id?: string;
 }
 
-export const RegisterCollectionAndDeliveries: React.FC<IRegisterCollectionAndDeliveries> = ({ isVisible, onClose }) => {
+interface IRegisterCollectionAndDeliveries {
+    isVisible: boolean;
+    onClose(close: false): void;
+    type: TRegistrationType;
+    data?: IData;
+}
+
+export const RegisterCollectionAndDeliveries: React.FC<IRegisterCollectionAndDeliveries> = ({ isVisible, onClose, data, type }) => {
     const [cities, setCities] = useState<ISelectItems[]>([]);
     const [listOfCity, setListOfCity] = useState<ICity[]>([]);
 
@@ -36,9 +38,23 @@ export const RegisterCollectionAndDeliveries: React.FC<IRegisterCollectionAndDel
     const [messageIsVisible, setMessageIsVisible] = useState<boolean>(false);
     const [message, setMessage] = useState('');
 
+    const [dataSelected, setDataSelected] = useState<IData>();
+
     useEffect(() => {
         loadCities();
     }, []);
+
+    useEffect(() => {
+        if (isVisible && data && (type === 'UPDATE')) {
+            setDataSelected({
+                to: listOfCity.find((item) => item.name === data.to)?.id || '',
+                from: listOfCity.find((item) => item.name === data.from)?.id || '',
+                collectionAmount: data.collectionAmount,
+                deliveryAmount: data.deliveryAmount,
+                id: data.id,
+            });
+        } else setDataSelected(undefined);
+    }, [isVisible]);
 
     const loadCities = async (): Promise<void> => {
         const city = await getCities();
@@ -67,24 +83,55 @@ export const RegisterCollectionAndDeliveries: React.FC<IRegisterCollectionAndDel
             .required('Informe o valor de coleta'),
     });
 
+    const validateDocumentCreation = useCallback(async (data: IData): Promise<boolean> => {
+        const response = await checkDocumentCollectionAndDeliveriesAmount({
+            to: data.to as any,
+            from: data.from as any,
+        });
+
+        return response;
+    }, [listOfCity, dataSelected]);
+
     const handleSubmitRegister = useCallback(async (data: IData) => {
         setLoading(true);
 
-        addCollectAndDeliveriesAmount({
+        const response = {
+            id: dataSelected?.id || '',
             to: listOfCity.filter((item) => item.id === data.to)[0],
             from: listOfCity.filter((item) => item.id === data.from)[0],
             collectionAmount: formattedCurrency(data.collectionAmount, true) as number,
             deliveryAmount: formattedCurrency(data.deliveryAmount, true) as number,
-        })
-            .catch((error) => {
-                setMessage(error);
+        };
+
+        if (type === 'CREATE') {
+            if (await validateDocumentCreation(response as any)) {
+                setMessage('Está rota já foi cadastrada');
                 setMessageIsVisible(true);
-            })
-            .then(() => {
-                onClose(false);
-            })
-            .finally(() => setLoading(false));
-    }, [listOfCity]);
+                setLoading(false);
+                return;
+            }
+
+            addCollectAndDeliveriesAmount(response)
+                .catch((error) => {
+                    setMessage(error);
+                    setMessageIsVisible(true);
+                })
+                .then(() => {
+                    onClose(false);
+                })
+                .finally(() => setLoading(false));
+        } else {
+            updateCollectAndDeliveriesAmount(response)
+                .catch((error) => {
+                    setMessage(error);
+                    setMessageIsVisible(true);
+                })
+                .then(() => {
+                    onClose(false);
+                })
+                .finally(() => setLoading(false));
+        }
+    }, [listOfCity, dataSelected]);
 
     const getCitieOrdenaded = useMemo(() => cities.sort((a, b) => {
         if (a.label.toLowerCase() > b.label.toLowerCase()) {
@@ -92,6 +139,10 @@ export const RegisterCollectionAndDeliveries: React.FC<IRegisterCollectionAndDel
         }
         return -1;
     }), [cities]);
+
+    if (isVisible && !dataSelected && type === 'UPDATE') {
+        return null;
+    }
 
     return (
         <>
@@ -104,10 +155,10 @@ export const RegisterCollectionAndDeliveries: React.FC<IRegisterCollectionAndDel
                 <Formik
                     validationSchema={validationSchema}
                     initialValues={{
-                        from: '',
-                        to: '',
-                        deliveryAmount: '',
-                        collectionAmount: '',
+                        from: (dataSelected && dataSelected.from) || '',
+                        to: (dataSelected && dataSelected.to) || '',
+                        deliveryAmount: (dataSelected && dataSelected.deliveryAmount) || '',
+                        collectionAmount: (dataSelected && dataSelected.collectionAmount) || '',
                     }}
                     onSubmit={({ collectionAmount, deliveryAmount, from, to }) => {
                         handleSubmitRegister({
@@ -127,6 +178,7 @@ export const RegisterCollectionAndDeliveries: React.FC<IRegisterCollectionAndDel
                                     required
                                     placeholder="Informe a cidade de origem"
                                     selectedValues={values.from}
+                                    defaultValue={values.from}
                                     setSelectedValues={handleChange('from')}
                                 />
 
@@ -135,6 +187,7 @@ export const RegisterCollectionAndDeliveries: React.FC<IRegisterCollectionAndDel
                                     label="Para"
                                     required
                                     selectedValues={values.to}
+                                    defaultValue={values.to}
                                     placeholder="Informe a cidade de destino"
                                     setSelectedValues={handleChange('to')}
                                 />

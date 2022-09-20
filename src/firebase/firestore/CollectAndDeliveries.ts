@@ -5,12 +5,19 @@ import { TDeliveryStatus, TPeriod } from '../../models/types';
 import { getDateFirebase } from '../../utils/LIB';
 import { dbFirestore } from '../config';
 import { accountId } from './Account';
+import { ICity } from './Cities';
 
 type TCollectionsAndDeliveries = 'COLLECT' | 'DELIVERY';
 
 interface IDeliverymanToCollectionAndDeliveriesDTO extends IDeliverymanCollectDelivery {
     collectionAndDeliveriesID: string;
     type: 'COLLECT' | 'DELIVERY';
+}
+
+interface IDataDTO {
+    from: ICity;
+    to: ICity;
+    id?: string;
 }
 
 interface IParamsGetCollectionAndDeliveries {
@@ -24,8 +31,8 @@ export const addCollectAndDeliveriesAmount = async (data: IAmountCollectDeliveri
     try {
         const docRef = doc(collection(dbFirestore, 'valores_de_coletas_entregas'));
         await setDoc(docRef, {
-            valorDaColeta: data.collectionAmount,
-            valorDaEntrega: data.deliveryAmount,
+            valor_coleta: data.collectionAmount,
+            valor_entrega: data.deliveryAmount,
             origem: {
                 nome: data.from.name,
                 codigo_ibge: data.from.codeIbge,
@@ -42,6 +49,45 @@ export const addCollectAndDeliveriesAmount = async (data: IAmountCollectDeliveri
     } catch (error) {
         throw new Error('Não foi possível salvar o documento');
     }
+};
+
+export const updateCollectAndDeliveriesAmount = async (data: IGetCollectDeliveries): Promise<void> => {
+    try {
+        const docRef = doc(dbFirestore, 'valores_de_coletas_entregas', data.id);
+
+        await updateDoc(docRef, {
+            valor_coleta: data.collectionAmount,
+            valor_entrega: data.deliveryAmount,
+            origem: {
+                nome: data.from.name,
+                codigo_ibge: data.from.codeIbge,
+                conta_ref: data.from.accountRef,
+                uf: data.from.state,
+            },
+            destino: {
+                nome: data.to.name,
+                codigo_ibge: data.to.codeIbge,
+                conta_ref: data.to.accountRef,
+                uf: data.to.state,
+            },
+        });
+    } catch (error) {
+        throw new Error('Não foi possível salvar o documento');
+    }
+};
+
+export const checkDocumentCollectionAndDeliveriesAmount = async (data: IDataDTO): Promise<boolean> => {
+    const docRef = query(
+        collection(dbFirestore, 'valores_de_coletas_entregas'),
+        where('destino.nome', '==', data.to.name),
+        where('origem.nome', '==', data.from.name),
+    );
+
+    console.log(data.to, data.from);
+
+    const doc = await getDocs(docRef);
+
+    return !doc.empty;
 };
 
 export const getCollectAndDeliveriesAmount = async (): Promise<IGetCollectDeliveries[] | undefined> => {

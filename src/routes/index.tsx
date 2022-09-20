@@ -29,7 +29,7 @@ export const Routes: React.FC = () => {
         if (user && user.email) {
             getUserData(user.email)
                 .then((u) => {
-                    if (u?.webAccess) {
+                    if (u?.admin) {
                         dispatch(setUser(u));
                     } else {
                         setShowMessageUser(true);
