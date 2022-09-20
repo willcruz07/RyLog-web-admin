@@ -2,13 +2,13 @@ import { Formik } from 'formik';
 import React, { useCallback, useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import { getCollectAndDeliveriesAmount } from '../../firebase/firestore/CollectAndDeliveries';
-import { ICitiesServed, setDeliveryman } from '../../firebase/firestore/Deliveryman';
+import { setDeliveryman } from '../../firebase/firestore/Deliveryman';
 import { IGetCollectDeliveries } from '../../models/AmountCollectionAndDeliveries';
 import { TRegistrationType } from '../../models/types';
 import { formattedCPF, formattedLicensePlate, formattedPhone, removeMask } from '../../utils/LIB';
 import { ButtonPrimary } from '../ButtonPrimary';
 import { Input } from '../Input';
-import { InputSelectTip, ISelectItems } from '../InputSelect';
+// import { InputSelectTip, ISelectItems } from '../InputSelect';
 import { LoaderFullScreen } from '../Loader';
 import { Message } from '../Message';
 import { Modal } from '../Modal';
@@ -25,16 +25,15 @@ interface IDataRegister {
     name: string;
     cpf: string;
     cnh: string;
-    // email: string;
+    email: string;
     licensePlate: string;
     phone: string;
-    citiesServed: string[];
 }
 
 export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible, onClose }) => {
     const [loading, setLoading] = useState(false);
     const [citiesServed, setCitiesServed] = useState<IGetCollectDeliveries[]>([]);
-    const [listOfCities, setListOfCities] = useState<ISelectItems[]>([]);
+    // const [listOfCities, setListOfCities] = useState<ISelectItems[]>([]);
 
     const [messageIsVisible, setMessageIsVisible] = useState<boolean>(false);
     const [message, setMessage] = useState('');
@@ -48,20 +47,23 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
         if (cities) {
             setCitiesServed(cities);
 
-            if (cities) {
-                cities.forEach((item) => {
-                    setListOfCities((prevState) => [...prevState, {
-                        label: `${item.from.name} - ${item.to.name}`,
-                        value: item.id,
-                    }]);
-                });
-            }
+            // if (cities) {
+            //     cities.forEach((item) => {
+            //         setListOfCities((prevState) => [...prevState, {
+            //             label: `${item.from.name} - ${item.to.name}`,
+            //             value: item.id,
+            //         }]);
+            //     });
+            // }
         }
     };
 
     const validationSchema = Yup.object().shape({
         name: Yup.string()
             .required('Informe o nome do entregador'),
+        email: Yup.string()
+            .email()
+            .required('Informe o email do entregador'),
         cpf: Yup.string()
             .required('Informe o cpf do entregador'),
         cnh: Yup.string()
@@ -73,35 +75,40 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
     const handleSubmitRegister = useCallback(async (data: IDataRegister) => {
         setLoading(true);
 
-        const listCitiesServed: ICitiesServed[] = [];
+        console.log(data);
+        // const listCitiesServed: ICitiesServed[] = [];
 
-        citiesServed.forEach((item) => {
-            if (data.citiesServed.includes(item.id)) {
-                listCitiesServed.push({
-                    citiesName: `${item.from.name} - ${item.to.name}`,
-                    collectionAndDeliveryId: item.id,
-                });
-            }
-        });
+        // citiesServed.forEach((item) => {
+        //     if (data.citiesServed.includes(item.id)) {
+        //         listCitiesServed.push({
+        //             citiesName: `${item.from.name} - ${item.to.name}`,
+        //             collectionAndDeliveryId: item.id,
+        //         });
+        //     }
+        // });
 
-        setDeliveryman({
-            phone: data.phone,
-            name: data.name,
-            cnh: data.cnh,
-            cpf: data.cpf,
-            // email: data.email,
-            licensePlate: data.licensePlate,
-            citiesServed: listCitiesServed,
-        })
-            .catch((error) => {
-                setLoading(false);
-                setMessage(error);
-                setMessageIsVisible(true);
-            })
-            .then(() => {
-                setLoading(false);
-                onClose(false);
-            });
+        // setDeliveryman({
+        //     phone: data.phone,
+        //     name: data.name,
+        //     cnh: data.cnh,
+        //     cpf: data.cpf,
+        //     email: data.email,
+        //     licensePlate: data.licensePlate,
+        // })
+        //     .catch((error) => {
+        //         setLoading(false);
+        //         setMessage(error);
+        //         setMessageIsVisible(true);
+        //     })
+        //     .then(() => {
+        //         setLoading(false);
+        //         onClose(false);
+        //     });
+
+        setTimeout(() => {
+            setLoading(false);
+            onClose(false);
+        }, 500);
     }, [citiesServed]);
 
     return (
@@ -119,22 +126,20 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
                     cnh: '',
                     licensePlate: '',
                     phone: '',
-                    // email: '',
-                    citiesServed: [],
+                    email: '',
                 }}
-                onSubmit={({ cnh, cpf, licensePlate, name, phone, citiesServed }) => {
+                onSubmit={({ cnh, cpf, licensePlate, name, phone, email }) => {
                     handleSubmitRegister({
                         cnh,
                         cpf: removeMask(cpf),
                         licensePlate,
                         name,
-                        // email,
+                        email,
                         phone: removeMask(phone),
-                        citiesServed,
                     });
                 }}
             >
-                {({ handleChange, handleSubmit, values, errors, setFieldValue }) => (
+                {({ handleChange, handleSubmit, values, errors }) => (
                     <form className="container-form-register-deliveryman">
                         <Input
                             disabled={loading}
@@ -148,7 +153,7 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
                             error={errors.name}
                         />
 
-                        {/* <Input
+                        <Input
                             disabled={loading}
                             required
                             label="E-mail"
@@ -158,7 +163,7 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
                             type="text"
                             marginTop={8}
                             error={errors.email}
-                        /> */}
+                        />
 
                         <div className="container-form-register-deliveryman__row-2">
                             <Input
@@ -214,7 +219,7 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
                             />
                         </div>
 
-                        <InputSelectTip
+                        {/* <InputSelectTip
                             required
                             label="Cidades atendidas"
                             marginTop={16}
@@ -224,11 +229,12 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
                             selectedValues={values.citiesServed}
                             setSelectedValues={(values) => setFieldValue('citiesServed', values)}
                             multiple
-                        />
+                        /> */}
 
                         <ButtonPrimary
                             title="Salvar"
                             onClick={handleSubmit}
+                            marginTop={16}
                         />
                     </form>
                 )}
