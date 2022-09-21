@@ -1,5 +1,5 @@
-import { Formik } from 'formik';
 import React, { useCallback, useEffect, useState } from 'react';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { getCollectAndDeliveriesAmount } from '../../firebase/firestore/CollectAndDeliveries';
 import { setDeliveryman } from '../../firebase/firestore/Deliveryman';
@@ -75,151 +75,135 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
     const handleSubmitRegister = useCallback(async (data: IDataRegister) => {
         setLoading(true);
 
-        console.log(data);
-        // const listCitiesServed: ICitiesServed[] = [];
-
-        // citiesServed.forEach((item) => {
-        //     if (data.citiesServed.includes(item.id)) {
-        //         listCitiesServed.push({
-        //             citiesName: `${item.from.name} - ${item.to.name}`,
-        //             collectionAndDeliveryId: item.id,
-        //         });
-        //     }
-        // });
-
-        // setDeliveryman({
-        //     phone: data.phone,
-        //     name: data.name,
-        //     cnh: data.cnh,
-        //     cpf: data.cpf,
-        //     email: data.email,
-        //     licensePlate: data.licensePlate,
-        // })
-        //     .catch((error) => {
-        //         setLoading(false);
-        //         setMessage(error);
-        //         setMessageIsVisible(true);
-        //     })
-        //     .then(() => {
-        //         setLoading(false);
-        //         onClose(false);
-        //     });
-
-        setTimeout(() => {
-            setLoading(false);
-            onClose(false);
-        }, 500);
-    }, [citiesServed]);
+        setDeliveryman({
+            phone: data.phone,
+            name: data.name,
+            cnh: data.cnh,
+            cpf: data.cpf,
+            email: data.email,
+            licensePlate: data.licensePlate,
+        })
+            .then(() => {
+                setLoading(false);
+                onClose(false);
+            })
+            .catch((error) => {
+                setLoading(false);
+                setMessage(error.message);
+                setMessageIsVisible(true);
+            });
+    }, []);
 
     return (
-        <Modal
-            isVisible={isVisible}
-            onClose={onClose}
-            title="Adicionar Entregador"
-            fullScreenMobile
-        >
-            <Formik
-                validationSchema={validationSchema}
-                initialValues={{
-                    name: '',
-                    cpf: '',
-                    cnh: '',
-                    licensePlate: '',
-                    phone: '',
-                    email: '',
-                }}
-                onSubmit={({ cnh, cpf, licensePlate, name, phone, email }) => {
-                    handleSubmitRegister({
-                        cnh,
-                        cpf: removeMask(cpf),
-                        licensePlate,
-                        name,
-                        email,
-                        phone: removeMask(phone),
-                    });
-                }}
+        <>
+            <Modal
+                isVisible={isVisible}
+                onClose={onClose}
+                title="Adicionar Entregador"
+                fullScreenMobile
             >
-                {({ handleChange, handleSubmit, values, errors }) => (
-                    <form className="container-form-register-deliveryman">
-                        <Input
-                            disabled={loading}
-                            required
-                            label="Nome"
-                            onChange={handleChange('name')}
-                            value={values.name}
-                            placeholder="Informe o nome do entregador"
-                            type="text"
-                            marginTop={8}
-                            error={errors.name}
-                        />
-
-                        <Input
-                            disabled={loading}
-                            required
-                            label="E-mail"
-                            onChange={handleChange('email')}
-                            value={values.email}
-                            placeholder="Informe o email do entregador"
-                            type="text"
-                            marginTop={8}
-                            error={errors.email}
-                        />
-
-                        <div className="container-form-register-deliveryman__row-2">
+                <Formik
+                    validationSchema={validationSchema}
+                    initialValues={{
+                        name: '',
+                        cpf: '',
+                        cnh: '',
+                        licensePlate: '',
+                        phone: '',
+                        email: '',
+                    }}
+                    onSubmit={({ cnh, cpf, licensePlate, name, phone, email }) => {
+                        handleSubmitRegister({
+                            cnh,
+                            cpf: removeMask(cpf),
+                            licensePlate,
+                            name,
+                            email,
+                            phone: removeMask(phone),
+                        });
+                    }}
+                >
+                    {({ handleChange, handleSubmit, values, errors }) => (
+                        <form className="container-form-register-deliveryman">
                             <Input
                                 disabled={loading}
                                 required
-                                label="CPF"
-                                placeholder="Informe o CPF"
-                                onChange={handleChange('cpf')}
-                                maxLength={14}
-                                value={formattedCPF(values.cpf)}
+                                label="Nome"
+                                onChange={handleChange('name')}
+                                value={values.name}
+                                placeholder="Informe o nome do entregador"
                                 type="text"
                                 marginTop={8}
-                                error={errors.cpf}
+                                error={errors.name}
                             />
 
                             <Input
                                 disabled={loading}
                                 required
-                                label="CNH"
-                                placeholder="Informe o CNH"
-                                onChange={handleChange('cnh')}
-                                value={values.cnh}
-                                maxLength={11}
+                                label="E-mail"
+                                onChange={handleChange('email')}
+                                value={values.email}
+                                placeholder="Informe o email do entregador"
                                 type="text"
                                 marginTop={8}
-                                error={errors.cnh}
+                                error={errors.email}
                             />
 
-                            <Input
-                                disabled={loading}
-                                required
-                                label="Emplacamento"
-                                placeholder="Informe o Emplacamento"
-                                onChange={handleChange('licensePlate')}
-                                value={formattedLicensePlate(values.licensePlate)}
-                                type="text"
-                                maxLength={8}
-                                marginTop={8}
-                                error={errors.licensePlate}
-                            />
+                            <div className="container-form-register-deliveryman__row-2">
+                                <Input
+                                    disabled={loading}
+                                    required
+                                    label="CPF"
+                                    placeholder="Informe o CPF"
+                                    onChange={handleChange('cpf')}
+                                    maxLength={14}
+                                    value={formattedCPF(values.cpf)}
+                                    type="text"
+                                    marginTop={8}
+                                    error={errors.cpf}
+                                />
 
-                            <Input
-                                disabled={loading}
-                                required
-                                label="Celular"
-                                placeholder="Informe o Celular"
-                                onChange={handleChange('phone')}
-                                value={formattedPhone(values.phone)}
-                                type="text"
-                                marginTop={8}
-                                maxLength={15}
-                                error={errors.phone}
-                            />
-                        </div>
+                                <Input
+                                    disabled={loading}
+                                    required
+                                    label="CNH"
+                                    placeholder="Informe o CNH"
+                                    onChange={handleChange('cnh')}
+                                    value={values.cnh}
+                                    maxLength={11}
+                                    type="text"
+                                    marginTop={8}
+                                    error={errors.cnh}
+                                />
 
-                        {/* <InputSelectTip
+                                <Input
+                                    disabled={loading}
+                                    required
+                                    label="Emplacamento"
+                                    placeholder="Informe o Emplacamento"
+                                    onChange={handleChange('licensePlate')}
+                                    value={formattedLicensePlate(values.licensePlate)}
+                                    type="text"
+                                    maxLength={8}
+                                    marginTop={8}
+                                    error={errors.licensePlate}
+                                />
+
+                                <Input
+                                    disabled={loading}
+                                    required
+                                    label="Celular"
+                                    placeholder="Informe o Celular"
+                                    onChange={handleChange('phone')}
+                                    value={formattedPhone(values.phone)}
+                                    type="text"
+                                    marginTop={8}
+                                    maxLength={15}
+                                    error={errors.phone}
+                                />
+                            </div>
+
+                            {/* <InputSelectTip
                             required
                             label="Cidades atendidas"
                             marginTop={16}
@@ -231,14 +215,15 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
                             multiple
                         /> */}
 
-                        <ButtonPrimary
-                            title="Salvar"
-                            onClick={handleSubmit}
-                            marginTop={16}
-                        />
-                    </form>
-                )}
-            </Formik>
+                            <ButtonPrimary
+                                title="Salvar"
+                                onClick={handleSubmit}
+                                marginTop={16}
+                            />
+                        </form>
+                    )}
+                </Formik>
+            </Modal>
 
             <Message
                 isVisible={messageIsVisible}
@@ -251,6 +236,6 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
                 isVisible={loading}
                 title="Cadastrando entregador"
             />
-        </Modal>
+        </>
     );
 };

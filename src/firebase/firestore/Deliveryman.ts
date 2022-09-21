@@ -1,5 +1,6 @@
-import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore';
-import { dbFirestore } from '../config';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { httpsCallable } from 'firebase/functions';
+import { dbFirestore, firebaseFunctions } from '../config';
 
 export interface ICitiesServed {
     collectionAndDeliveryId: string;
@@ -21,15 +22,21 @@ export interface IGetDeliveryman extends IDeliveryman {
 
 export const setDeliveryman = async (data: IDeliveryman): Promise<void> => {
     try {
-        const docRef = doc(collection(dbFirestore, 'entregadores'));
-        await setDoc(docRef, {
-            cpf: data.cpf,
-            cnh: data.cnh,
-            celular: data.phone,
-            nome: data.name,
-            email: data.email,
-            emplacamento: data.licensePlate,
+        const createDeliveryman = httpsCallable(firebaseFunctions, 'oncall_cadastrar_usuario');
 
+        console.log(data, 'DATA');
+
+        await createDeliveryman({
+            name: data.name,
+            email: data.email,
+            phone: data.phone,
+            password: '123456',
+            isClient: false,
+            document: data.cpf,
+            isWebAdmin: false,
+            isDeliveryman: true,
+            license_number: data.cnh,
+            car_number_plate: data.licensePlate,
         });
     } catch (error) {
         throw new Error('Não foi possível salvar o entregador');
