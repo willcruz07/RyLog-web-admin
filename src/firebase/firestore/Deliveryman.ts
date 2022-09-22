@@ -55,7 +55,7 @@ export const getDeliveryman = async (): Promise<IGetDeliveryman[] | undefined> =
     deliverymanDocs.forEach((doc) => {
         listCities.push({
             id: doc.id,
-            name: doc.data()?.name,
+            name: doc.data()?.nome,
             phone: doc.data().celular,
             cnh: doc.data()?.cnh,
             cpf: doc.data()?.cpf,
