@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { GridRowsProp, GridColDef } from '@mui/x-data-grid';
-import { collection, onSnapshot, query } from 'firebase/firestore';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { ButtonBack } from '../../../../components/ButtonBack';
 import { ButtonPrimary } from '../../../../components/ButtonPrimary';
 import { Input } from '../../../../components/Input';
@@ -30,7 +30,7 @@ export const RegistrationOfDeliveryman: React.FC = () => {
     const { width } = useWindowSize();
 
     useEffect(() => {
-        const queryCollection = query(collection(dbFirestore, 'entregadores'));
+        const queryCollection = query(collection(dbFirestore, 'usuarios'), where('entregador', '==', true));
         const dataList = onSnapshot(queryCollection, (snapShot) => {
             snapShot.docChanges().forEach((change) => {
                 const doc = Object.assign(change.doc.data(), { id: change.doc.id });
@@ -39,16 +39,12 @@ export const RegistrationOfDeliveryman: React.FC = () => {
                     case 'added':
                         setDeliveryman((prevState) => [...prevState, {
                             id: doc?.id,
-                            cnh: doc?.cnh,
-                            cpf: formattedCPF(doc?.cpf),
+                            cnh: doc?.cnh || '',
+                            cpf: formattedCPF(doc?.documento) || '',
                             name: doc?.nome,
                             email: doc?.email,
                             phone: formattedPhone(doc?.celular),
                             licensePlate: doc?.emplacamento,
-                            citiesServed: doc?.cidadesAtendidas?.map((item: any) => ({
-                                citiesName: item.nome,
-                                collectionAndDeliveryId: item.idCidade,
-                            })),
                         }]);
                         break;
 
@@ -66,10 +62,6 @@ export const RegistrationOfDeliveryman: React.FC = () => {
                             email: doc?.email,
                             phone: formattedPhone(doc?.celular),
                             licensePlate: doc?.emplacamento,
-                            citiesServed: doc?.cidadesAtendidas?.map((item: any) => ({
-                                citiesName: item.nome,
-                                collectionAndDeliveryId: item.idCidade,
-                            })),
                         }]);
                         break;
                     }
@@ -122,10 +114,6 @@ export const RegistrationOfDeliveryman: React.FC = () => {
                     <Grid
                         rows={deliveryman}
                         columns={columns}
-                        onEdit={(item) => {
-                            console.log(item, 'edit');
-                            setTypeRegister('UPDATE');
-                        }}
                         onDelete={(item) => console.log(item, 'delete')}
                     />
 

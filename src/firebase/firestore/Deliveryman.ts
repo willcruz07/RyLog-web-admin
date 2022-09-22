@@ -24,19 +24,19 @@ export const setDeliveryman = async (data: IDeliveryman): Promise<void> => {
     try {
         const createDeliveryman = httpsCallable(firebaseFunctions, 'oncall_cadastrar_usuario');
 
-        console.log(data, 'DATA');
-
         await createDeliveryman({
-            name: data.name,
-            email: data.email,
-            phone: data.phone,
-            password: '123456',
-            isClient: false,
-            document: data.cpf,
-            isWebAdmin: false,
-            isDeliveryman: true,
-            license_number: data.cnh,
-            car_number_plate: data.licensePlate,
+            user_payload: {
+                name: data.name,
+                email: data.email,
+                phone: data.phone,
+                password: '123456',
+                isClient: false,
+                document: data.cpf,
+                isWebAdmin: false,
+                isDeliveryman: true,
+                license_number: data.cnh,
+                car_number_plate: data.licensePlate,
+            },
         });
     } catch (error) {
         throw new Error('Não foi possível salvar o entregador');

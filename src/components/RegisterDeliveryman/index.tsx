@@ -1,9 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { getCollectAndDeliveriesAmount } from '../../firebase/firestore/CollectAndDeliveries';
 import { setDeliveryman } from '../../firebase/firestore/Deliveryman';
-import { IGetCollectDeliveries } from '../../models/AmountCollectionAndDeliveries';
 import { TRegistrationType } from '../../models/types';
 import { formattedCPF, formattedLicensePlate, formattedPhone, removeMask } from '../../utils/LIB';
 import { ButtonPrimary } from '../ButtonPrimary';
@@ -32,31 +30,9 @@ interface IDataRegister {
 
 export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible, onClose }) => {
     const [loading, setLoading] = useState(false);
-    const [citiesServed, setCitiesServed] = useState<IGetCollectDeliveries[]>([]);
-    // const [listOfCities, setListOfCities] = useState<ISelectItems[]>([]);
 
     const [messageIsVisible, setMessageIsVisible] = useState<boolean>(false);
     const [message, setMessage] = useState('');
-
-    useEffect(() => {
-        loadCitiesServed();
-    }, []);
-
-    const loadCitiesServed = async () => {
-        const cities = await getCollectAndDeliveriesAmount();
-        if (cities) {
-            setCitiesServed(cities);
-
-            // if (cities) {
-            //     cities.forEach((item) => {
-            //         setListOfCities((prevState) => [...prevState, {
-            //             label: `${item.from.name} - ${item.to.name}`,
-            //             value: item.id,
-            //         }]);
-            //     });
-            // }
-        }
-    };
 
     const validationSchema = Yup.object().shape({
         name: Yup.string()
@@ -202,18 +178,6 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
                                     error={errors.phone}
                                 />
                             </div>
-
-                            {/* <InputSelectTip
-                            required
-                            label="Cidades atendidas"
-                            marginTop={16}
-                            marginBottom={24}
-                            placeholder="Informe as cidade atendidas"
-                            items={listOfCities}
-                            selectedValues={values.citiesServed}
-                            setSelectedValues={(values) => setFieldValue('citiesServed', values)}
-                            multiple
-                        /> */}
 
                             <ButtonPrimary
                                 title="Salvar"
