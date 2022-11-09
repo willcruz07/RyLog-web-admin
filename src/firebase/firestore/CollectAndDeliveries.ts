@@ -166,65 +166,67 @@ export const getCollectionsAndDeliveries = async (type: TCollectionsAndDeliverie
     const listCollectionsAndDeliveries: ICollectionsAndDeliveries[] = [];
 
     docs.forEach((doc) => {
-        listCollectionsAndDeliveries.push({
-            id: doc.data()?.uid || '',
-            date: getDateFirebase(doc.data()?.data),
-            collectStatus: doc.data()?.status_coleta || 'PENDENTE',
-            deliveryStatus: doc.data()?.status_entrega || 'PENDENTE',
-            period: doc.data()?.periodo || 'MANHÃ',
-            printedLabel: doc.data()?.etiquetas_impressas || '',
-            pathSignature: doc.data()?.path_assinatura || '',
-            receiver: {
-                name: doc.data().remetente?.nome || '',
-                cpf: doc.data().remetente?.cpf || '',
-                phone: doc.data().remetente?.celular || '',
-                rg: doc.data().remetente?.rg || '',
-                userRef: doc.data()?.remetente?.usuario_ref || '',
-                address: {
-                    zipCode: doc.data()?.remetente?.endereco?.cep || '',
-                    complement: doc.data()?.remetente?.endereco?.complemento || '',
-                    country: doc.data()?.remetente?.endereco?.pais || '',
-                    district: doc.data()?.remetente?.endereco?.bairro || '',
-                    number: doc.data()?.remetente?.endereco?.numero || '',
-                    state: doc.data()?.remetente?.endereco.uf || '',
-                    street: doc.data()?.remetente?.endereco?.logradouro || '',
-                    ref: doc.data()?.remetente?.endereco?.ref || '',
-                    reference: doc.data()?.remetente?.endereco?.referencia || '',
-                    city: {
-                        name: doc.data()?.remetente?.endereco?.cidade?.nome || '',
-                        ref: doc.data()?.remetente?.endereco?.cidade?.ref || '',
+        if (!listCollectionsAndDeliveries.find((item) => item.id === doc.id)) {
+            listCollectionsAndDeliveries.push({
+                id: doc.id || '',
+                date: getDateFirebase(doc.data()?.data),
+                collectStatus: doc.data()?.status_coleta || 'PENDENTE',
+                deliveryStatus: doc.data()?.status_entrega || 'PENDENTE',
+                period: doc.data()?.periodo || 'MANHÃ',
+                printedLabel: doc.data()?.etiquetas_impressas || false,
+                pathSignature: doc.data()?.path_assinatura || '',
+                receiver: {
+                    name: doc.data().remetente?.nome || '',
+                    cpf: doc.data().remetente?.cpf || '',
+                    phone: doc.data().remetente?.celular || '',
+                    rg: doc.data().remetente?.rg || '',
+                    userRef: doc.data()?.remetente?.usuario_ref || '',
+                    address: {
+                        zipCode: doc.data()?.remetente?.endereco?.cep || '',
+                        complement: doc.data()?.remetente?.endereco?.complemento || '',
+                        country: doc.data()?.remetente?.endereco?.pais || '',
+                        district: doc.data()?.remetente?.endereco?.bairro || '',
+                        number: doc.data()?.remetente?.endereco?.numero || '',
+                        state: doc.data()?.remetente?.endereco?.uf || '',
+                        street: doc.data()?.remetente?.endereco?.logradouro || '',
+                        ref: doc.data()?.remetente?.endereco?.ref || '',
+                        reference: doc.data()?.remetente?.endereco?.referencia || '',
+                        city: {
+                            name: doc.data()?.remetente?.endereco?.cidade?.nome || '',
+                            ref: doc.data()?.remetente?.endereco?.cidade?.ref || '',
+                        },
                     },
                 },
-            },
-            sender: {
-                name: doc.data()?.destinatario?.nome || '',
-                phone: doc.data()?.destinatario?.celular || '',
-                address: {
-                    zipCode: doc.data()?.destinatario?.endereco?.cep || '',
-                    complement: doc.data()?.destinatario?.endereco?.complemento || '',
-                    country: doc.data()?.destinatario?.endereco?.pais || '',
-                    district: doc.data()?.destinatario?.endereco?.bairro || '',
-                    number: doc.data()?.destinatario?.endereco?.numero || '',
-                    state: doc.data()?.destinatario?.endereco.uf || '',
-                    street: doc.data()?.destinatario?.endereco?.logradouro || '',
-                    ref: doc.data()?.destinatario?.endereco?.ref || '',
-                    reference: doc.data()?.destinatario?.endereco?.referencia || '',
-                    city: {
-                        name: doc.data()?.destinatario?.endereco?.cidade?.nome || '',
-                        ref: doc.data()?.destinatario?.endereco?.cidade?.ref || '',
+                sender: {
+                    name: doc.data()?.destinatario?.nome || '',
+                    phone: doc.data()?.destinatario?.celular || '',
+                    address: {
+                        zipCode: doc.data()?.destinatario?.endereco?.cep || '',
+                        complement: doc.data()?.destinatario?.endereco?.complemento || '',
+                        country: doc.data()?.destinatario?.endereco?.pais || '',
+                        district: doc.data()?.destinatario?.endereco?.bairro || '',
+                        number: doc.data()?.destinatario?.endereco?.numero || '',
+                        state: doc.data()?.destinatario?.endereco?.uf || '',
+                        street: doc.data()?.destinatario?.endereco?.logradouro || '',
+                        ref: doc.data()?.destinatario?.endereco?.ref || '',
+                        reference: doc.data()?.destinatario?.endereco?.referencia || '',
+                        city: {
+                            name: doc.data()?.destinatario?.endereco?.cidade?.nome || '',
+                            ref: doc.data()?.destinatario?.endereco?.cidade?.ref || '',
+                        },
                     },
                 },
-            },
-            deliverymanCollect: {
-                name: doc.data()?.entregador_coleta?.nome || '',
-                deliverymanRef: doc.data()?.entregador_coleta?.ref || '',
-            },
-            deliverymanDelivery: {
-                name: doc.data()?.entregador_entrega?.nome,
-                deliverymanRef: doc.data()?.entregador_entrega?.ref || '',
-            },
+                deliverymanCollect: {
+                    name: doc.data()?.entregador_coleta?.nome || '',
+                    deliverymanRef: doc.data()?.entregador_coleta?.ref || '',
+                },
+                deliverymanDelivery: {
+                    name: doc.data()?.entregador_entrega?.nome,
+                    deliverymanRef: doc.data()?.entregador_entrega?.ref || '',
+                },
 
-        });
+            });
+        }
     });
 
     return listCollectionsAndDeliveries;
