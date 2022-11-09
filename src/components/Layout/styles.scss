@@ -5,7 +5,8 @@
 .container-grid-layout {
     display: grid;
     grid-template-columns: min-content auto;
-    grid-template-rows: $d--80 auto;
+    grid-template-rows: $d--80 auto;    
+    
     height: 100vh;
 
     grid-template-areas: 
@@ -25,13 +26,10 @@
     padding: $d--32;    
 
     width: 100%;   
-    min-height: $d--600;
+    min-height: $d--700;
 
     animation: animateShow 0.3s ease-in;
 
-    overflow: auto; 
-    
-    // @media(max-width: 700px) {        
-    //     padding: 0;
-    // }
+    overflow: auto;    
+
 }
