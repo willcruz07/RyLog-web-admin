@@ -54,7 +54,7 @@ export const Nav: React.FC = () => {
                             </NavLink>
                         </li>
 
-                        <li data-tip={tooltipShow ? 'Financeiro' : ''}>
+                        {/* <li data-tip={tooltipShow ? 'Financeiro' : ''}>
                             <NavLink
                                 to="financial"
                                 className={({ isActive }) => (isActive ? 'active' : '')}
@@ -62,7 +62,7 @@ export const Nav: React.FC = () => {
                                 <FaFileInvoiceDollar />
                                 <span>Financeiro</span>
                             </NavLink>
-                        </li>
+                        </li> */}
 
                         <li data-tip={tooltipShow ? 'Movimentações' : ''}>
                             <NavLink
@@ -84,7 +84,7 @@ export const Nav: React.FC = () => {
                             </NavLink>
                         </li>
 
-                        <li data-tip={tooltipShow ? 'Parceiros' : ''}>
+                        {/* <li data-tip={tooltipShow ? 'Parceiros' : ''}>
                             <NavLink
                                 to="partners"
                                 className={({ isActive }) => (isActive ? 'active' : '')}
@@ -92,7 +92,7 @@ export const Nav: React.FC = () => {
                                 <FaUsers />
                                 <span>Parceiros</span>
                             </NavLink>
-                        </li>
+                        </li> */}
 
                         <li data-tip={tooltipShow ? 'Sair' : ''}>
                             <NavLink
