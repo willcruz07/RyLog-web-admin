@@ -17,14 +17,6 @@ export const Records: React.FC = () => {
         navigate('cities');
     }, []);
 
-    const handleNavigateDelivery = useCallback(() => {
-        navigate('delivery');
-    }, []);
-
-    const handleNavigateCollect = useCallback(() => {
-        navigate('collect');
-    }, []);
-
     return (
         <ContentAnimate>
             <Typography
@@ -45,20 +37,6 @@ export const Records: React.FC = () => {
                     subtitle="Cadastro de rotas de coletas e entregas"
                     icon="map"
                     action={handleNavigateCities}
-                />
-
-                <RegistrationCardButton
-                    title="Coletas"
-                    subtitle="Direcionar coletas para os entregadores"
-                    icon="collect"
-                    action={handleNavigateCollect}
-                />
-
-                <RegistrationCardButton
-                    title="Entregas"
-                    subtitle="Direcionar entregas para os entregadores"
-                    icon="delivery"
-                    action={handleNavigateDelivery}
                 />
             </div>
         </ContentAnimate>

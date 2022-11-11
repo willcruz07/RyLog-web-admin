@@ -4,11 +4,11 @@ import { Layout } from '../components/Layout';
 import { Dashboard } from '../pages/App/Dashboard';
 import { Financial } from '../pages/App/Financial';
 import { Movement } from '../pages/App/Movement';
+import { RegistrationOfCollect } from '../pages/App/Movement/Collect';
+import { RegistrationOfDelivery } from '../pages/App/Movement/Delivery';
 import { Partners } from '../pages/App/Partners';
 import { Records } from '../pages/App/Records';
 import { RegistrationOfCities } from '../pages/App/Records/Cities';
-import { RegistrationOfCollect } from '../pages/App/Records/Collect';
-import { RegistrationOfDelivery } from '../pages/App/Records/Delivery';
 import { RegistrationOfDeliveryman } from '../pages/App/Records/Deliveryman';
 import { Settings } from '../pages/App/Settings';
 
@@ -17,13 +17,15 @@ export const App: React.FC = () => (
         <Routes>
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="financial" element={<Financial />} />
-            <Route path="movement" element={<Movement />} />
+            <Route path="movement">
+                <Route index element={<Movement />} />
+                <Route path="delivery" element={<RegistrationOfDelivery />} />
+                <Route path="collect" element={<RegistrationOfCollect />} />
+            </Route>
             <Route path="records">
                 <Route index element={<Records />} />
                 <Route path="deliveryman" element={<RegistrationOfDeliveryman />} />
                 <Route path="cities" element={<RegistrationOfCities />} />
-                <Route path="delivery" element={<RegistrationOfDelivery />} />
-                <Route path="collect" element={<RegistrationOfCollect />} />
             </Route>
             <Route path="partners" element={<Partners />} />
             <Route path="settings" element={<Settings />} />

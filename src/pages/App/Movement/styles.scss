@@ -1,1 +1,12 @@
 @import '../../../styles/variables.scss';
+
+.container-grid-movement {
+    padding-top: $d--24;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax($d--8, $d--300));
+    gap: $d--16;
+
+    @media(max-width: 700px) {
+        grid-template-columns: 100%;
+    }
+}
