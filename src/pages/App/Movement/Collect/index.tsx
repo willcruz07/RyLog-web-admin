@@ -101,8 +101,6 @@ export const RegistrationOfCollect: React.FC = () => {
             .finally(() => setLoading(false));
     };
 
-    console.log(collectionsAndDeliveries);
-
     const handleNewRegister = useCallback(() => {
         setRegisterIsVisible(true);
     }, []);
