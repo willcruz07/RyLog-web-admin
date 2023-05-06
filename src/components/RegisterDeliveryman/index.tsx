@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from 'react';
 import { Formik } from 'formik';
+import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import { setDeliveryman } from '../../firebase/firestore/Deliveryman';
 import { TRegistrationType } from '../../models/types';

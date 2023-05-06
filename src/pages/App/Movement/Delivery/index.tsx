@@ -9,7 +9,9 @@ import { Grid } from '../../../../components/DataGrid';
 import { Input } from '../../../../components/Input';
 import { InputDate } from '../../../../components/InputDate';
 import { InputSelectAutoComplete } from '../../../../components/InputSelectAutoComplete';
+import { LoaderFullScreen } from '../../../../components/Loader';
 import { RegisterDeliverymanInCollectionAndDeliveries } from '../../../../components/RegisterDeliverymanInCollectionAndDeliveries';
+import { ShowCollectAndDelivery } from '../../../../components/ShowCollectAndDelivery';
 import { Typography } from '../../../../components/Typography';
 import { getCollectionsAndDeliveries } from '../../../../firebase/firestore/CollectAndDeliveries';
 import { ICollectionsAndDeliveries } from '../../../../models/CollectionsAndDeliveries';
@@ -84,6 +86,9 @@ export const RegistrationOfDelivery: React.FC = () => {
     const [collectionsAndDeliveries, setCollectionsAndDeliveries] = useState<GridRowsProp<ICollectionsAndDeliveries>>([]);
     const [fullCollectionsAndDeliveries, setFullCollectionsAndDeliveries] = useState<GridRowsProp<ICollectionsAndDeliveries>>([]);
 
+    const [showDataCollect, setShowDataCollect] = useState<boolean>(false);
+    const [dataCollectSelected, setDataCollectSelected] = useState<ICollectionsAndDeliveries>();
+
     useEffect(() => {
         loadingCollectionsAndDeliveries();
     }, []);
@@ -95,8 +100,29 @@ export const RegistrationOfDelivery: React.FC = () => {
             finalDate,
         })
             .then((data) => {
-                setCollectionsAndDeliveries(data);
-                setFullCollectionsAndDeliveries(data);
+                const period = periodList.find((item) => item.value.toLowerCase() === periodSelected.toLowerCase())?.label.toLowerCase() ?? '';
+                const status = statusList.find((item) => item.value.toLowerCase() === statusSelected.toLowerCase())?.label.toLowerCase() ?? '';
+
+                const response = data
+                    .sort((a, b) => b.date.getTime() - a.date.getTime())
+                    .filter((item) => {
+                        if (period && status) {
+                            return item.period.toLowerCase() === period && item.collectStatus.toLowerCase() === status;
+                        }
+
+                        if (period) {
+                            return item.period.toLowerCase() === period;
+                        }
+
+                        if (status) {
+                            return item.collectStatus.toLowerCase() === status;
+                        }
+
+                        return item;
+                    });
+
+                setCollectionsAndDeliveries(response);
+                setFullCollectionsAndDeliveries(response);
             })
             .finally(() => setLoading(false));
     };
@@ -113,16 +139,14 @@ export const RegistrationOfDelivery: React.FC = () => {
         const list = fullCollectionsAndDeliveries.filter((item) => (
             item.receiver.address.district.toLowerCase().includes(text.toLowerCase()) ||
             item.receiver.address.city.name.toLowerCase().includes(text.toLowerCase()) ||
-            item.deliverymanCollect?.name.toLocaleLowerCase().includes(text.toLowerCase())
+            item.deliverymanCollect?.name.toLowerCase().includes(text.toLowerCase())
         ));
 
         setCollectionsAndDeliveries(list);
         setSearch(text);
     };
 
-    const validateRowSelected = (value: string): boolean => !(['CANCELADA', 'CONFIRMADA']).includes(value);
-
-    console.log(collectionsAndDeliveries);
+    const validateRowSelected = (value: string): boolean => !(['CANCELADA', 'CONFIRMADA', 'REALIZADA']).includes(value);
 
     return (
         <>
@@ -219,7 +243,10 @@ export const RegistrationOfDelivery: React.FC = () => {
                         isRowSelectable={(params) => validateRowSelected(params.row.deliveryStatus)}
                         selectionModel={deliveriesSelected}
                         onSetSelectionModel={setDeliveriesSelected}
-                        onViewing={(item) => console.log(item, 'visualizar')}
+                        onViewing={(item) => {
+                            setDataCollectSelected(item);
+                            setShowDataCollect(true);
+                        }}
                     />
 
                 </div>
@@ -230,12 +257,24 @@ export const RegistrationOfDelivery: React.FC = () => {
                 onClose={(data) => {
                     setRegisterIsVisible(false);
                     if (data) {
+                        console.log('Das');
                         loadingCollectionsAndDeliveries();
                     }
                 }}
                 listOfCollectionsAndDeliveries={deliveriesSelected as string[]}
                 type="DELIVERY"
             />
+
+            {dataCollectSelected && (
+                <ShowCollectAndDelivery
+                    isVisible={showDataCollect}
+                    onClose={setShowDataCollect}
+                    data={dataCollectSelected}
+                    type="DELIVERY"
+                />
+            )}
+
+            <LoaderFullScreen isVisible={loading} />
 
         </>
     );

@@ -2,19 +2,21 @@ import { GridColDef, GridRowsProp, GridSelectionModel } from '@mui/x-data-grid';
 import React, { useCallback, useEffect, useState } from 'react';
 import { ButtonBack } from '../../../../components/ButtonBack';
 import { ButtonPrimary } from '../../../../components/ButtonPrimary';
+import { ButtonSecondary } from '../../../../components/ButtonSecondary';
+import { Checkbox } from '../../../../components/Checkbox';
 import { ContentAnimate } from '../../../../components/ContentAnimate';
 import { Grid } from '../../../../components/DataGrid';
 import { Input } from '../../../../components/Input';
+import { InputDate } from '../../../../components/InputDate';
+import { InputSelectAutoComplete } from '../../../../components/InputSelectAutoComplete';
+import { LoaderFullScreen } from '../../../../components/Loader';
 import { RegisterDeliverymanInCollectionAndDeliveries } from '../../../../components/RegisterDeliverymanInCollectionAndDeliveries';
+import { ShowCollectAndDelivery } from '../../../../components/ShowCollectAndDelivery';
 import { Typography } from '../../../../components/Typography';
 import { getCollectionsAndDeliveries } from '../../../../firebase/firestore/CollectAndDeliveries';
 import { ICollectionsAndDeliveries } from '../../../../models/CollectionsAndDeliveries';
-import { InputDate } from '../../../../components/InputDate';
-import { Checkbox } from '../../../../components/Checkbox';
-import { InputSelectAutoComplete } from '../../../../components/InputSelectAutoComplete';
-import './styles.scss';
-import { ButtonSecondary } from '../../../../components/ButtonSecondary';
 import { dateTimeToStr, getEndOfWeek, getStartOfWeek } from '../../../../utils/LIB';
+import './styles.scss';
 
 const columns: GridColDef[] = [
     {
@@ -84,19 +86,44 @@ export const RegistrationOfCollect: React.FC = () => {
     const [collectionsAndDeliveries, setCollectionsAndDeliveries] = useState<GridRowsProp<ICollectionsAndDeliveries>>([]);
     const [fullCollectionsAndDeliveries, setFullCollectionsAndDeliveries] = useState<GridRowsProp<ICollectionsAndDeliveries>>([]);
 
+    const [showDataCollect, setShowDataCollect] = useState<boolean>(false);
+    const [dataCollectSelected, setDataCollectSelected] = useState<ICollectionsAndDeliveries>();
+
     useEffect(() => {
         loadingCollectionsAndDeliveries();
     }, []);
 
     const loadingCollectionsAndDeliveries = () => {
         setLoading(true);
+
         getCollectionsAndDeliveries('COLLECT', {
             initialDate,
             finalDate,
         })
             .then((data) => {
-                setCollectionsAndDeliveries(data);
-                setFullCollectionsAndDeliveries(data);
+                const period = periodList.find((item) => item.value.toLowerCase() === periodSelected.toLowerCase())?.label.toLowerCase() ?? '';
+                const status = statusList.find((item) => item.value.toLowerCase() === statusSelected.toLowerCase())?.label.toLowerCase() ?? '';
+
+                const response = data
+                    .sort((a, b) => b.date.getTime() - a.date.getTime())
+                    .filter((item) => {
+                        if (period && status) {
+                            return item.period.toLowerCase() === period && item.collectStatus.toLowerCase() === status;
+                        }
+
+                        if (period) {
+                            return item.period.toLowerCase() === period;
+                        }
+
+                        if (status) {
+                            return item.collectStatus.toLowerCase() === status;
+                        }
+
+                        return item;
+                    });
+
+                setCollectionsAndDeliveries(response);
+                setFullCollectionsAndDeliveries(response);
             })
             .finally(() => setLoading(false));
     };
@@ -107,20 +134,21 @@ export const RegistrationOfCollect: React.FC = () => {
 
     const handleChangeFilter = useCallback(() => {
         loadingCollectionsAndDeliveries();
-    }, [initialDate, finalDate]);
+    }, [initialDate, finalDate, statusSelected, periodSelected]);
 
     const handleFilterGrid = (text: string) => {
         const list = fullCollectionsAndDeliveries.filter((item) => (
             item.sender.address.district.toLowerCase().includes(text.toLowerCase()) ||
             item.sender.address.city.name.toLowerCase().includes(text.toLowerCase()) ||
-            item.deliverymanCollect?.name.toLocaleLowerCase().includes(text.toLowerCase())
+            item.deliverymanCollect?.name.toLocaleLowerCase().includes(text.toLowerCase()) ||
+            item.collectStatus.toLowerCase().includes(text.toLowerCase())
         ));
 
         setCollectionsAndDeliveries(list);
         setSearch(text);
     };
 
-    const validateRowSelected = (value: string): boolean => !(['CANCELADA', 'CONFIRMADA']).includes(value);
+    const validateRowSelected = (value: string): boolean => !(['CANCELADA', 'CONFIRMADA', 'REALIZADA']).includes(value);
 
     return (
         <>
@@ -219,7 +247,10 @@ export const RegistrationOfCollect: React.FC = () => {
                         isRowSelectable={(params) => validateRowSelected(params.row.collectStatus)}
                         selectionModel={collectionsSelected}
                         onSetSelectionModel={setCollectionsSelected}
-                        onViewing={(item) => console.log(item, 'visualizar')}
+                        onViewing={(item) => {
+                            setDataCollectSelected(item);
+                            setShowDataCollect(true);
+                        }}
                     />
 
                 </div>
@@ -236,6 +267,17 @@ export const RegistrationOfCollect: React.FC = () => {
                 listOfCollectionsAndDeliveries={collectionsSelected as string[]}
                 type="COLLECT"
             />
+
+            {dataCollectSelected && (
+                <ShowCollectAndDelivery
+                    isVisible={showDataCollect}
+                    onClose={setShowDataCollect}
+                    data={dataCollectSelected}
+                    type="COLLECT"
+                />
+            )}
+
+            <LoaderFullScreen isVisible={loading} />
 
         </>
     );

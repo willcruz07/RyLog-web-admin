@@ -1,18 +1,18 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { GridRowsProp, GridColDef } from '@mui/x-data-grid';
+import { GridColDef, GridRowsProp } from '@mui/x-data-grid';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ButtonBack } from '../../../../components/ButtonBack';
 import { ButtonPrimary } from '../../../../components/ButtonPrimary';
-import { Input } from '../../../../components/Input';
-import { Typography } from '../../../../components/Typography';
 import { ContentAnimate } from '../../../../components/ContentAnimate';
 import { Grid } from '../../../../components/DataGrid';
+import { Input } from '../../../../components/Input';
 import { RegisterDeliveryman } from '../../../../components/RegisterDeliveryman';
-import { TRegistrationType } from '../../../../models/types';
+import { Typography } from '../../../../components/Typography';
 import { dbFirestore } from '../../../../firebase/config';
-import { formattedCPF, formattedPhone } from '../../../../utils/LIB';
 import { IGetDeliveryman } from '../../../../firebase/firestore/Deliveryman';
 import { useWindowSize } from '../../../../hooks/useWindowSize';
+import { TRegistrationType } from '../../../../models/types';
+import { formattedCPF, formattedPhone } from '../../../../utils/LIB';
 
 const columns: GridColDef[] = [
     { field: 'name', headerName: 'Nome', flex: 1, minWidth: 150 },
