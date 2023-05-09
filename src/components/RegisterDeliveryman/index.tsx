@@ -1,7 +1,7 @@
 import { Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
-import { setDeliveryman } from '../../firebase/firestore/Deliveryman';
+import { setDeliveryman, updateDeliveryman } from '../../firebase/firestore/Deliveryman';
 import { TRegistrationType } from '../../models/types';
 import { formattedCPF, formattedLicensePlate, formattedPhone, removeMask } from '../../utils/LIB';
 import { ButtonPrimary } from '../ButtonPrimary';
@@ -13,13 +13,8 @@ import { Modal } from '../Modal';
 
 import './styles.scss';
 
-interface IRegisterDeliveryman {
-    isVisible: boolean;
-    onClose(close: false): void;
-    type: TRegistrationType;
-}
-
-interface IDataRegister {
+export interface IDataDeliverymanRegister {
+    id?: string;
     name: string;
     cpf: string;
     cnh: string;
@@ -28,7 +23,14 @@ interface IDataRegister {
     phone: string;
 }
 
-export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible, onClose }) => {
+interface IRegisterDeliveryman {
+    isVisible: boolean;
+    onClose(close: false): void;
+    type: TRegistrationType;
+    data?: IDataDeliverymanRegister;
+}
+
+export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible, onClose, type, data }) => {
     const [loading, setLoading] = useState(false);
 
     const [messageIsVisible, setMessageIsVisible] = useState<boolean>(false);
@@ -48,45 +50,65 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
             .required('Informe o celular do entregador'),
     });
 
-    const handleSubmitRegister = useCallback(async (data: IDataRegister) => {
+    const handleSubmitRegister = useCallback(async ({ cnh, cpf, email, licensePlate, name, phone }: IDataDeliverymanRegister) => {
         setLoading(true);
 
-        setDeliveryman({
-            phone: data.phone,
-            name: data.name,
-            cnh: data.cnh,
-            cpf: data.cpf,
-            email: data.email,
-            licensePlate: data.licensePlate,
-        })
-            .then(() => {
+        if (type === 'CREATE') {
+            setDeliveryman({
+                phone,
+                name,
+                cnh,
+                cpf,
+                email,
+                licensePlate,
+            })
+                .then(() => {
+                    setLoading(false);
+                    onClose(false);
+                })
+                .catch((error) => {
+                    setLoading(false);
+                    setMessage(error.message);
+                    setMessageIsVisible(true);
+                });
+        } else {
+            updateDeliveryman({
+                id: data?.id ?? '',
+                phone,
+                name,
+                cnh,
+                cpf,
+                email,
+                licensePlate,
+            }).then(() => {
                 setLoading(false);
                 onClose(false);
             })
-            .catch((error) => {
-                setLoading(false);
-                setMessage(error.message);
-                setMessageIsVisible(true);
-            });
-    }, []);
+                .catch((error) => {
+                    setLoading(false);
+                    setMessage(error.message);
+                    setMessageIsVisible(true);
+                });
+        }
+    }, [type, data]);
 
     return (
         <>
             <Modal
                 isVisible={isVisible}
                 onClose={onClose}
-                title="Adicionar Entregador"
+                title={type === 'UPDATE' ? 'Editar Entregador' : 'Adicionar Entregador'}
                 fullScreenMobile
             >
                 <Formik
                     validationSchema={validationSchema}
                     initialValues={{
-                        name: '',
-                        cpf: '',
-                        cnh: '',
-                        licensePlate: '',
-                        phone: '',
-                        email: '',
+                        name: type === 'UPDATE' && data ? data.name : '',
+                        cpf: type === 'UPDATE' && data ? data.cpf : '',
+                        cnh: type === 'UPDATE' && data ? data.cnh : '',
+                        licensePlate: type === 'UPDATE' && data ? data.licensePlate : '',
+                        phone: type === 'UPDATE' && data ? data.phone : '',
+                        email: type === 'UPDATE' && data ? data.email : '',
                     }}
                     onSubmit={({ cnh, cpf, licensePlate, name, phone, email }) => {
                         handleSubmitRegister({
@@ -114,7 +136,7 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
                             />
 
                             <Input
-                                disabled={loading}
+                                disabled={loading || type === 'UPDATE'}
                                 required
                                 label="E-mail"
                                 onChange={handleChange('email')}

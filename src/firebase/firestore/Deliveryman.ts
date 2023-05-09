@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import { dbFirestore, firebaseFunctions } from '../config';
 
@@ -40,6 +40,33 @@ export const setDeliveryman = async (data: IDeliveryman): Promise<void> => {
         });
     } catch (error) {
         throw new Error('Não foi possível salvar o entregador');
+    }
+};
+
+export const deleteDeliveryman = async (data: IGetDeliveryman): Promise<void> => {
+    const docRef = doc(dbFirestore, 'usuarios', data.id);
+
+    try {
+        deleteDoc(docRef);
+    } catch (error) {
+        throw new Error('Não foi possível deletar o entregador');
+    }
+};
+
+export const updateDeliveryman = async (data: IGetDeliveryman): Promise<void> => {
+    const docRef = doc(dbFirestore, 'usuarios', data.id);
+
+    try {
+        await updateDoc(docRef, {
+            nome: data.name,
+            email: data.email,
+            celular: data.phone,
+            documento: data.cpf,
+            cnh: data.cnh,
+            placa_carro: data.licensePlate,
+        });
+    } catch (error) {
+        throw new Error('Não foi possível editar o entregador');
     }
 };
 

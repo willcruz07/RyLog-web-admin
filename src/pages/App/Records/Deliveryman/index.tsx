@@ -6,10 +6,11 @@ import { ButtonPrimary } from '../../../../components/ButtonPrimary';
 import { ContentAnimate } from '../../../../components/ContentAnimate';
 import { Grid } from '../../../../components/DataGrid';
 import { Input } from '../../../../components/Input';
-import { RegisterDeliveryman } from '../../../../components/RegisterDeliveryman';
+import { Dialog } from '../../../../components/Message';
+import { IDataDeliverymanRegister, RegisterDeliveryman } from '../../../../components/RegisterDeliveryman';
 import { Typography } from '../../../../components/Typography';
 import { dbFirestore } from '../../../../firebase/config';
-import { IGetDeliveryman } from '../../../../firebase/firestore/Deliveryman';
+import { IGetDeliveryman, deleteDeliveryman } from '../../../../firebase/firestore/Deliveryman';
 import { useWindowSize } from '../../../../hooks/useWindowSize';
 import { TRegistrationType } from '../../../../models/types';
 import { formattedCPF, formattedPhone } from '../../../../utils/LIB';
@@ -23,9 +24,12 @@ const columns: GridColDef[] = [
 
 export const RegistrationOfDeliveryman: React.FC = () => {
     const [registerIsVisible, setRegisterIsVisible] = useState(false);
+    const [data, setData] = useState<IDataDeliverymanRegister>();
     const [typeRegister, setTypeRegister] = useState<TRegistrationType>('CREATE');
 
     const [deliveryman, setDeliveryman] = useState<GridRowsProp<IGetDeliveryman>>([]);
+    const [messageDeleteIsVisible, setMessageDeleteIsVisible] = useState<boolean>(false);
+    const [messageDelete, setMessageDelete] = useState<string>('');
 
     const { width } = useWindowSize();
 
@@ -44,7 +48,7 @@ export const RegistrationOfDeliveryman: React.FC = () => {
                             name: doc?.nome,
                             email: doc?.email,
                             phone: formattedPhone(doc?.celular),
-                            licensePlate: doc?.emplacamento,
+                            licensePlate: doc?.placa_carro,
                         }]);
                         break;
 
@@ -76,6 +80,23 @@ export const RegistrationOfDeliveryman: React.FC = () => {
         setTypeRegister('CREATE');
         setRegisterIsVisible(true);
     }, []);
+
+    const handleEditRegister = useCallback((data: IDataDeliverymanRegister) => {
+        setData(data);
+        setTypeRegister('UPDATE');
+        setRegisterIsVisible(true);
+    }, []);
+
+    const handleDeleteRegister = useCallback((data: IDataDeliverymanRegister) => {
+        setData(data);
+        setMessageDelete(`Deseja realmente deletar o entregador ${data.name} ?`);
+        setMessageDeleteIsVisible(true);
+    }, []);
+
+    const handleExecDeleteRegister = useCallback(async () => {
+        await deleteDeliveryman(data as any);
+        setMessageDeleteIsVisible(false);
+    }, [data]);
 
     return (
         <>
@@ -114,7 +135,8 @@ export const RegistrationOfDeliveryman: React.FC = () => {
                     <Grid
                         rows={deliveryman}
                         columns={columns}
-                        onDelete={(item) => console.log(item, 'delete')}
+                        onDelete={(item) => handleDeleteRegister(item)}
+                        onEdit={(item) => handleEditRegister(item)}
                     />
 
                 </div>
@@ -124,6 +146,15 @@ export const RegistrationOfDeliveryman: React.FC = () => {
                 isVisible={registerIsVisible}
                 onClose={setRegisterIsVisible}
                 type={typeRegister}
+                data={data}
+            />
+
+            <Dialog
+                isVisible={messageDeleteIsVisible}
+                message={messageDelete}
+                onAccept={handleExecDeleteRegister}
+                onDismiss={() => setMessageDeleteIsVisible(false)}
+                title="Deletar entregador"
             />
         </>
     );
