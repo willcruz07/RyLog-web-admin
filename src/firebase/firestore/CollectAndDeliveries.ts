@@ -1,4 +1,4 @@
-import { collection, doc, DocumentData, getDocs, Query, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, DocumentData, getDocs, Query, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { IAmountCollectDeliveries, IGetCollectDeliveries } from '../../models/AmountCollectionAndDeliveries';
 import { ICollectionsAndDeliveries, IDeliverymanCollectDelivery } from '../../models/CollectionsAndDeliveries';
 import { TDeliveryStatus, TPeriod } from '../../models/types';
@@ -82,8 +82,6 @@ export const checkDocumentCollectionAndDeliveriesAmount = async (data: IDataDTO)
         where('destino.nome', '==', data.to.name),
         where('origem.nome', '==', data.from.name),
     );
-
-    console.log(data.to, data.from);
 
     const doc = await getDocs(docRef);
 
@@ -250,5 +248,32 @@ export const addDeliverymanToCollectionAndDeliveries = async (data: IDeliveryman
         });
     } catch (error) {
         throw new Error('Não foi possível atualizar a coleta');
+    }
+};
+
+export const deleteRoute = async (data: ICity): Promise<void> => {
+    const docRef = doc(dbFirestore, 'valores_de_coletas_entregas', data.id);
+
+    try {
+        deleteDoc(docRef);
+    } catch (error) {
+        throw new Error('Não foi possível deletar a rota');
+    }
+};
+
+export const removeDeliveryman = async (data: ICollectionsAndDeliveries, type: 'COLLECT' | 'DELIVERY'): Promise<void> => {
+    const docCollections = doc(dbFirestore, 'contas', accountId, 'coletas_entregas', data.id);
+
+    const field = type === 'COLLECT' ? 'entregador_coleta' : 'entregador_entrega';
+    const dataDoc = {
+        [field]: {
+            name: '',
+            ref: '',
+        },
+    };
+    try {
+        updateDoc(docCollections, dataDoc);
+    } catch (error) {
+        throw new Error('Não foi possível remover o entregador');
     }
 };

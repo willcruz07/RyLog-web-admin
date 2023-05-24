@@ -2,13 +2,13 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable jsx-a11y/mouse-events-have-key-events */
 /* eslint-disable no-console */
-import React, { useEffect, useState } from 'react';
-import { DataGrid, GridCellParams, GridRowsProp, GridColDef, useGridApiContext, useGridSelector, gridPageSelector, gridPageCountSelector, GridSelectionModel, GridRowParams } from '@mui/x-data-grid';
+import Box from '@mui/material/Box';
 import Pagination from '@mui/material/Pagination';
-import { FaEdit, FaTrash, FaFileAlt } from 'react-icons/fa';
 import Tooltip from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
+import { DataGrid, GridCellParams, GridColDef, GridRowParams, GridRowsProp, GridSelectionModel, gridPageCountSelector, gridPageSelector, useGridApiContext, useGridSelector } from '@mui/x-data-grid';
+import React, { useEffect, useState } from 'react';
+import { FaEdit, FaFileAlt, FaTrash } from 'react-icons/fa';
 import { Colors } from '../../styles/variables';
 
 import './styles.scss';
@@ -120,7 +120,7 @@ export const Grid: React.FC<IDataGridProps> = ({
         if (!!onEdit || !!onDelete || !!onViewing) {
             setListColumns((list) => [...list, {
                 field: 'action',
-                headerName: 'Ação',
+                headerName: 'Detalhes',
                 headerAlign: 'center',
                 align: 'center',
                 sortable: false,

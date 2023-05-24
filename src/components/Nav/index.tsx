@@ -1,15 +1,15 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useMemo } from 'react';
-import { FaSignOutAlt, FaFileInvoiceDollar, FaUsers, FaSync, FaChartPie, FaFolderPlus } from 'react-icons/fa';
+import { FaFolderPlus, FaSignOutAlt, FaSync } from 'react-icons/fa';
 import { NavLink } from 'react-router-dom';
 // import { signOut } from 'firebase/auth';
 // import ReactToolTip from 'react-tooltip';
 import { signOut } from 'firebase/auth';
-import { useMenuContext } from '../../hooks/MenuContextProvider';
 import Logo from '../../assets/img/Logo.png';
-import { useWindowSize } from '../../hooks/useWindowSize';
 import { auth } from '../../firebase/config';
+import { useMenuContext } from '../../hooks/MenuContextProvider';
+import { useWindowSize } from '../../hooks/useWindowSize';
 
 import './styles.scss';
 
@@ -44,7 +44,7 @@ export const Nav: React.FC = () => {
                 </div>
                 <nav className="container-nav__nav">
                     <ul>
-                        <li data-tip={tooltipShow ? 'Dashboard' : ''}>
+                        {/* <li data-tip={tooltipShow ? 'Dashboard' : ''}>
                             <NavLink
                                 to="dashboard"
                                 className={({ isActive }) => (isActive ? 'active' : '')}
@@ -52,7 +52,7 @@ export const Nav: React.FC = () => {
                                 <FaChartPie />
                                 <span>Dashboard</span>
                             </NavLink>
-                        </li>
+                        </li> */}
 
                         {/* <li data-tip={tooltipShow ? 'Financeiro' : ''}>
                             <NavLink

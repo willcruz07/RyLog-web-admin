@@ -135,17 +135,19 @@ export const RegisterDeliveryman: React.FC<IRegisterDeliveryman> = ({ isVisible,
                                 error={errors.name}
                             />
 
-                            <Input
-                                disabled={loading || type === 'UPDATE'}
-                                required
-                                label="E-mail"
-                                onChange={handleChange('email')}
-                                value={values.email}
-                                placeholder="Informe o email do entregador"
-                                type="text"
-                                marginTop={8}
-                                error={errors.email}
-                            />
+                            {type !== 'UPDATE' && (
+                                <Input
+                                    disabled={loading}
+                                    required
+                                    label="E-mail"
+                                    onChange={handleChange('email')}
+                                    value={values.email}
+                                    placeholder="Informe o email do entregador"
+                                    type="text"
+                                    marginTop={8}
+                                    error={errors.email}
+                                />
+                            )}
 
                             <div className="container-form-register-deliveryman__row-2">
                                 <Input

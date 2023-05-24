@@ -10,10 +10,11 @@ import { Input } from '../../../../components/Input';
 import { InputDate } from '../../../../components/InputDate';
 import { InputSelectAutoComplete } from '../../../../components/InputSelectAutoComplete';
 import { LoaderFullScreen } from '../../../../components/Loader';
+import { Dialog } from '../../../../components/Message';
 import { RegisterDeliverymanInCollectionAndDeliveries } from '../../../../components/RegisterDeliverymanInCollectionAndDeliveries';
 import { ShowCollectAndDelivery } from '../../../../components/ShowCollectAndDelivery';
 import { Typography } from '../../../../components/Typography';
-import { getCollectionsAndDeliveries } from '../../../../firebase/firestore/CollectAndDeliveries';
+import { getCollectionsAndDeliveries, removeDeliveryman } from '../../../../firebase/firestore/CollectAndDeliveries';
 import { ICollectionsAndDeliveries } from '../../../../models/CollectionsAndDeliveries';
 import { dateTimeToStr, getEndOfWeek, getStartOfWeek } from '../../../../utils/LIB';
 import './styles.scss';
@@ -61,6 +62,9 @@ const columns: GridColDef[] = [
 const statusList = [
     { label: 'Pendente', value: 'pending' },
     { label: 'Cancelada', value: 'cancel' },
+    { label: 'Confirmada', value: 'Confirm' },
+    { label: 'Realizada', value: 'ok' },
+    { label: 'Insucesso', value: 'insuccess' },
 ];
 
 const periodList = [
@@ -88,6 +92,9 @@ export const RegistrationOfDelivery: React.FC = () => {
 
     const [showDataCollect, setShowDataCollect] = useState<boolean>(false);
     const [dataCollectSelected, setDataCollectSelected] = useState<ICollectionsAndDeliveries>();
+
+    const [messageDeleteIsVisible, setMessageDeleteIsVisible] = useState<boolean>(false);
+    const [messageDelete, setMessageDelete] = useState<string>('');
 
     useEffect(() => {
         loadingCollectionsAndDeliveries();
@@ -144,6 +151,20 @@ export const RegistrationOfDelivery: React.FC = () => {
 
         setCollectionsAndDeliveries(list);
         setSearch(text);
+    };
+
+    const handleRemoveDeliveryman = useCallback((data: ICollectionsAndDeliveries) => {
+        setDataCollectSelected(data);
+        setMessageDelete(`Deseja realmente remover o entregador ${data?.deliverymanDelivery?.name} ?`);
+        setMessageDeleteIsVisible(true);
+    }, []);
+
+    const handleExecRemove = async () => {
+        if (dataCollectSelected) {
+            await removeDeliveryman(dataCollectSelected, 'DELIVERY');
+        }
+        setMessageDeleteIsVisible(false);
+        loadingCollectionsAndDeliveries();
     };
 
     const validateRowSelected = (value: string): boolean => !(['CANCELADA', 'CONFIRMADA', 'REALIZADA']).includes(value);
@@ -236,13 +257,14 @@ export const RegistrationOfDelivery: React.FC = () => {
                     </div>
 
                     <Grid
-                        rows={collectionsAndDeliveries}
+                        rows={collectionsAndDeliveries.filter((item) => (pendingSelected ? item?.deliverymanDelivery?.name === '' : item))}
                         columns={columns}
                         loading={loading}
                         checkboxSelection
                         isRowSelectable={(params) => validateRowSelected(params.row.deliveryStatus)}
                         selectionModel={deliveriesSelected}
                         onSetSelectionModel={setDeliveriesSelected}
+                        onDelete={(item) => handleRemoveDeliveryman(item)}
                         onViewing={(item) => {
                             setDataCollectSelected(item);
                             setShowDataCollect(true);
@@ -257,7 +279,6 @@ export const RegistrationOfDelivery: React.FC = () => {
                 onClose={(data) => {
                     setRegisterIsVisible(false);
                     if (data) {
-                        console.log('Das');
                         loadingCollectionsAndDeliveries();
                     }
                 }}
@@ -273,6 +294,14 @@ export const RegistrationOfDelivery: React.FC = () => {
                     type="DELIVERY"
                 />
             )}
+
+            <Dialog
+                isVisible={messageDeleteIsVisible}
+                message={messageDelete}
+                onAccept={handleExecRemove}
+                onDismiss={() => setMessageDeleteIsVisible(false)}
+                title="Remover entregador"
+            />
 
             <LoaderFullScreen isVisible={loading} />
 

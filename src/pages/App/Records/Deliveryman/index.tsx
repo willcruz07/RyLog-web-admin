@@ -1,6 +1,6 @@
 import { GridColDef, GridRowsProp } from '@mui/x-data-grid';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ButtonBack } from '../../../../components/ButtonBack';
 import { ButtonPrimary } from '../../../../components/ButtonPrimary';
 import { ContentAnimate } from '../../../../components/ContentAnimate';
@@ -30,6 +30,8 @@ export const RegistrationOfDeliveryman: React.FC = () => {
     const [deliveryman, setDeliveryman] = useState<GridRowsProp<IGetDeliveryman>>([]);
     const [messageDeleteIsVisible, setMessageDeleteIsVisible] = useState<boolean>(false);
     const [messageDelete, setMessageDelete] = useState<string>('');
+
+    const [search, setSearch] = useState<string>('');
 
     const { width } = useWindowSize();
 
@@ -61,11 +63,11 @@ export const RegistrationOfDeliveryman: React.FC = () => {
                         setDeliveryman((prevState) => [...prevState, {
                             id: doc?.id,
                             cnh: doc?.cnh,
-                            cpf: formattedCPF(doc?.cpf),
+                            cpf: formattedCPF(doc?.documento),
                             name: doc?.nome,
                             email: doc?.email,
                             phone: formattedPhone(doc?.celular),
-                            licensePlate: doc?.emplacamento,
+                            licensePlate: doc?.placa_carro,
                         }]);
                         break;
                     }
@@ -98,6 +100,11 @@ export const RegistrationOfDeliveryman: React.FC = () => {
         setMessageDeleteIsVisible(false);
     }, [data]);
 
+    const filteredDeliveryman = useMemo(() => deliveryman.filter((item) => {
+        const values = Object.values(item).join('').toLowerCase();
+        return values.includes(search.toLowerCase());
+    }), [deliveryman, search]);
+
     return (
         <>
             <ContentAnimate>
@@ -124,8 +131,8 @@ export const RegistrationOfDeliveryman: React.FC = () => {
                     <div className="container-registration__search">
                         <Input
                             label="Pesquisar"
-                            onChange={() => {}}
-                            value=""
+                            onChange={(value) => setSearch(value)}
+                            value={search}
                             type="text"
                             icon="search"
                             placeholder="Digite sua pesquisa..."
@@ -133,7 +140,7 @@ export const RegistrationOfDeliveryman: React.FC = () => {
                     </div>
 
                     <Grid
-                        rows={deliveryman}
+                        rows={filteredDeliveryman}
                         columns={columns}
                         onDelete={(item) => handleDeleteRegister(item)}
                         onEdit={(item) => handleEditRegister(item)}

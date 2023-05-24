@@ -10,10 +10,11 @@ import { Input } from '../../../../components/Input';
 import { InputDate } from '../../../../components/InputDate';
 import { InputSelectAutoComplete } from '../../../../components/InputSelectAutoComplete';
 import { LoaderFullScreen } from '../../../../components/Loader';
+import { Dialog } from '../../../../components/Message';
 import { RegisterDeliverymanInCollectionAndDeliveries } from '../../../../components/RegisterDeliverymanInCollectionAndDeliveries';
 import { ShowCollectAndDelivery } from '../../../../components/ShowCollectAndDelivery';
 import { Typography } from '../../../../components/Typography';
-import { getCollectionsAndDeliveries } from '../../../../firebase/firestore/CollectAndDeliveries';
+import { getCollectionsAndDeliveries, removeDeliveryman } from '../../../../firebase/firestore/CollectAndDeliveries';
 import { ICollectionsAndDeliveries } from '../../../../models/CollectionsAndDeliveries';
 import { dateTimeToStr, getEndOfWeek, getStartOfWeek } from '../../../../utils/LIB';
 import './styles.scss';
@@ -61,6 +62,9 @@ const columns: GridColDef[] = [
 const statusList = [
     { label: 'Pendente', value: 'pending' },
     { label: 'Cancelada', value: 'cancel' },
+    { label: 'Confirmada', value: 'Confirm' },
+    { label: 'Realizada', value: 'ok' },
+    { label: 'Insucesso', value: 'insuccess' },
 ];
 
 const periodList = [
@@ -88,6 +92,9 @@ export const RegistrationOfCollect: React.FC = () => {
 
     const [showDataCollect, setShowDataCollect] = useState<boolean>(false);
     const [dataCollectSelected, setDataCollectSelected] = useState<ICollectionsAndDeliveries>();
+
+    const [messageDeleteIsVisible, setMessageDeleteIsVisible] = useState<boolean>(false);
+    const [messageDelete, setMessageDelete] = useState<string>('');
 
     useEffect(() => {
         loadingCollectionsAndDeliveries();
@@ -146,6 +153,20 @@ export const RegistrationOfCollect: React.FC = () => {
 
         setCollectionsAndDeliveries(list);
         setSearch(text);
+    };
+
+    const handleRemoveDeliveryman = useCallback((data: ICollectionsAndDeliveries) => {
+        setDataCollectSelected(data);
+        setMessageDelete(`Deseja realmente remover o entregador ${data?.deliverymanDelivery?.name} ?`);
+        setMessageDeleteIsVisible(true);
+    }, []);
+
+    const handleExecRemove = async () => {
+        if (dataCollectSelected) {
+            await removeDeliveryman(dataCollectSelected, 'COLLECT');
+        }
+        setMessageDeleteIsVisible(false);
+        loadingCollectionsAndDeliveries();
     };
 
     const validateRowSelected = (value: string): boolean => !(['CANCELADA', 'CONFIRMADA', 'REALIZADA']).includes(value);
@@ -240,11 +261,12 @@ export const RegistrationOfCollect: React.FC = () => {
                     </div>
 
                     <Grid
-                        rows={collectionsAndDeliveries}
+                        rows={collectionsAndDeliveries.filter((item) => (pendingSelected ? item.deliverymanCollect?.name === '' : item))}
                         columns={columns}
                         loading={loading}
                         checkboxSelection
                         isRowSelectable={(params) => validateRowSelected(params.row.collectStatus)}
+                        onDelete={(item) => handleRemoveDeliveryman(item)}
                         selectionModel={collectionsSelected}
                         onSetSelectionModel={setCollectionsSelected}
                         onViewing={(item) => {
@@ -276,6 +298,14 @@ export const RegistrationOfCollect: React.FC = () => {
                     type="COLLECT"
                 />
             )}
+
+            <Dialog
+                isVisible={messageDeleteIsVisible}
+                message={messageDelete}
+                onAccept={handleExecRemove}
+                onDismiss={() => setMessageDeleteIsVisible(false)}
+                title="Remover entregador"
+            />
 
             <LoaderFullScreen isVisible={loading} />
 

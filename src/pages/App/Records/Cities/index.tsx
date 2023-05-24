@@ -1,14 +1,16 @@
 import { GridColDef, GridRowsProp } from '@mui/x-data-grid';
 import { collection, onSnapshot, query } from 'firebase/firestore';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ButtonBack } from '../../../../components/ButtonBack';
 import { ButtonPrimary } from '../../../../components/ButtonPrimary';
 import { ContentAnimate } from '../../../../components/ContentAnimate';
 import { Grid } from '../../../../components/DataGrid';
 import { Input } from '../../../../components/Input';
+import { Dialog } from '../../../../components/Message';
 import { RegisterCollectionAndDeliveries } from '../../../../components/RegisterCollectionAndDeliveries';
 import { Typography } from '../../../../components/Typography';
 import { dbFirestore } from '../../../../firebase/config';
+import { deleteRoute } from '../../../../firebase/firestore/CollectAndDeliveries';
 import { TRegistrationType } from '../../../../models/types';
 import { formattedCurrency } from '../../../../utils/LIB';
 
@@ -32,6 +34,11 @@ export const RegistrationOfCities: React.FC = () => {
     const [typeRegister, setTypeRegister] = useState<TRegistrationType>('CREATE');
 
     const [collectionsAndDeliveries, setCollectionsAndDeliveries] = useState<GridRowsProp<ICity>>([]);
+    const [messageDeleteIsVisible, setMessageDeleteIsVisible] = useState<boolean>(false);
+    const [messageDelete, setMessageDelete] = useState<string>('');
+
+    const [search, setSearch] = useState<string>('');
+
     const [dataSelected, setDataSelected] = useState<ICity>();
 
     useEffect(() => {
@@ -87,9 +94,21 @@ export const RegistrationOfCities: React.FC = () => {
         setRegisterIsVisible(true);
     }, []);
 
-    const handleRemoveRoute = useCallback((docId: string) => {
-        console.log(docId);
+    const handleDeleteRegister = useCallback((data: ICity) => {
+        setDataSelected(data);
+        setMessageDelete(`Deseja realmente deletar esta rota de ${data.from} para ${data.to} ?`);
+        setMessageDeleteIsVisible(true);
     }, []);
+
+    const handleRemoveRoute = useCallback(async () => {
+        await deleteRoute(dataSelected as any);
+        setMessageDeleteIsVisible(false);
+    }, [dataSelected]);
+
+    const filteredCollectionAndDeliveries = useMemo(() => collectionsAndDeliveries.filter((collection) => {
+        const values = Object.values(collection).join('').toLowerCase();
+        return values.includes(search.toLowerCase());
+    }), [collectionsAndDeliveries, search]);
 
     return (
         <>
@@ -116,8 +135,8 @@ export const RegistrationOfCities: React.FC = () => {
                     <div className="container-registration__search">
                         <Input
                             label="Pesquisar"
-                            onChange={() => {}}
-                            value=""
+                            onChange={(value) => setSearch(value)}
+                            value={search}
                             type="text"
                             icon="search"
                             placeholder="Digite sua pesquisa..."
@@ -125,10 +144,10 @@ export const RegistrationOfCities: React.FC = () => {
                     </div>
 
                     <Grid
-                        rows={collectionsAndDeliveries}
+                        rows={filteredCollectionAndDeliveries}
                         columns={columns}
-                        onDelete={handleRemoveRoute}
-                        onEdit={handleUpdateRoute}
+                        onDelete={(item) => handleDeleteRegister(item)}
+                        onEdit={(item) => handleUpdateRoute(item)}
                     />
 
                 </div>
@@ -145,6 +164,14 @@ export const RegistrationOfCities: React.FC = () => {
                     to: dataSelected.to,
                     id: dataSelected.id,
                 } : undefined}
+            />
+
+            <Dialog
+                isVisible={messageDeleteIsVisible}
+                message={messageDelete}
+                onAccept={handleRemoveRoute}
+                onDismiss={() => setMessageDeleteIsVisible(false)}
+                title="Deletar rota"
             />
 
         </>
