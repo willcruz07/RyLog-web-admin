@@ -110,11 +110,12 @@ export const RegistrationOfDelivery: React.FC = () => {
                 const period = periodList.find((item) => item.value.toLowerCase() === periodSelected.toLowerCase())?.label.toLowerCase() ?? '';
                 const status = statusList.find((item) => item.value.toLowerCase() === statusSelected.toLowerCase())?.label.toLowerCase() ?? '';
 
+                console.log(status, data, 'DATA');
                 const response = data
                     .sort((a, b) => b.date.getTime() - a.date.getTime())
                     .filter((item) => {
                         if (period && status) {
-                            return item.period.toLowerCase() === period && item.collectStatus.toLowerCase() === status;
+                            return item.period.toLowerCase() === period && item.deliveryStatus.toLowerCase() === status;
                         }
 
                         if (period) {
@@ -122,7 +123,7 @@ export const RegistrationOfDelivery: React.FC = () => {
                         }
 
                         if (status) {
-                            return item.collectStatus.toLowerCase() === status;
+                            return item.deliveryStatus.toLowerCase() === status;
                         }
 
                         return item;
@@ -140,7 +141,7 @@ export const RegistrationOfDelivery: React.FC = () => {
 
     const handleChangeFilter = useCallback(() => {
         loadingCollectionsAndDeliveries();
-    }, [initialDate, finalDate]);
+    }, [initialDate, finalDate, statusSelected, periodSelected]);
 
     const handleFilterGrid = (text: string) => {
         const list = fullCollectionsAndDeliveries.filter((item) => (
