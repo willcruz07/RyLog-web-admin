@@ -258,7 +258,7 @@ export const RegistrationOfDelivery: React.FC = () => {
                     </div>
 
                     <Grid
-                        rows={collectionsAndDeliveries.filter((item) => (pendingSelected ? item?.deliverymanDelivery?.name === '' : item))}
+                        rows={collectionsAndDeliveries.filter((item) => (pendingSelected ? !item?.deliverymanDelivery?.name : item))}
                         columns={columns}
                         loading={loading}
                         checkboxSelection
